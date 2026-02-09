@@ -1,0 +1,12 @@
+<div id="container">
+  <div id="titulo">
+    <h1>Página não encontrada</h1>
+  </div>
+  <img [src]="img_not_found" alt="Página não encontrada" />
+  <div id="conteudo">
+    <p>A página que você tentou acessar não existe.</p>
+    <p>Por favor, verifique o endereço ou volte para a página inicial.</p>
+    <span [routerLink]="['/home']" class="btn">Voltar para a página inicial</span>
+  </div>
+</div>
+

@@ -1,0 +1,32 @@
+<app-loading [isLoading]="(isLoading$ | async) ?? false"></app-loading>
+<div *ngIf="isLoaded">
+  <table class="tabela-generica" *ngIf="movimentos.length != 0; else semMovimentos">
+    <thead>
+      <tr>
+        <th>Veículo</th>
+        <th>Tipo de movimento</th>
+        <th>Situação</th>
+        <th>Entrada</th>
+        <th>Saída</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody *ngFor="let mv of movimentos">
+      <tr>
+        <td>{{ mv.placa }}</td>
+        <td>{{ mv.tipoMovimento }}</td>
+        <td>{{ mv.situacao }}</td>
+        <td>{{ mv.dtHrEntrada | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ mv.dtHrSaida | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>
+          <button class="btn btn-primary btn-acao" (click)="detalharMovimento(mv.id)">Detalhar</button><br>
+          <button class="btn btn-danger btn-acao" (click)="finalizarMovimento(mv.id)" *ngIf="mv.situacao == 'Aberto'">Encerrar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #semMovimentos>
+    <p>Nenhum movimento de veículo encontrado.</p>
+  </ng-template>
+</div>

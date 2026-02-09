@@ -1,0 +1,41 @@
+.div-mov-avulso {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  align-items: center;
+}
+
+.form-mov-avulso{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-direction: column;
+}
+
+.titulo-h2 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.btn-mov-avulso {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.div-movs-aberto{
+  position: relative;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  justify-items: center;
+}

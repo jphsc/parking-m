@@ -1,0 +1,33 @@
+<app-loading [isLoading]="(isLoading$ | async) ?? false"></app-loading>
+<div *ngIf="isLoaded">
+  <table *ngIf="regras.length != 0; else semRegras" class="tabela-generica">
+    <thead>
+      <tr>
+        <th>Descrição</th>
+        <th>Valor</th>
+        <th>Cobrança</th>
+        <th>Tipo Movimento</th>
+        <th>Válido de</th>
+        <th>Válido até</th>
+        <th>Situação</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let regra of regras">
+        <td>{{ regra.descricao }}</td>
+        <td>{{ regra.valor | currency:'BRL'}}</td>
+        <td>{{ regra.tipoCobranca }}</td>
+        <td>{{ regra.tipoMovimento }}</td>
+        <td>{{ regra.dtInicioValidade | date: 'dd/MM/yyyy'}}</td>
+        <td>{{ regra.dtFimValidade | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ regra.situacao }}</td>
+        <td><button class="btn btn-primary btn-acao" (click)="navEditarRegra(regra.id)">Editar</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #semRegras>
+    <p>Não há regras financeiras cadastradas.</p>
+  </ng-template>
+</div>

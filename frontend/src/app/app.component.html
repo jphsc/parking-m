@@ -1,0 +1,13 @@
+<div id="page-wrapper">
+  <div id="container">
+    <div id="container-esquerdo">
+      <app-card-lateral></app-card-lateral>
+    </div>
+
+    <div id="container-direito">
+      <app-card-cabecalho [titulo]="tituloPagina" *ngIf="mostrarCabecalho"></app-card-cabecalho>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+

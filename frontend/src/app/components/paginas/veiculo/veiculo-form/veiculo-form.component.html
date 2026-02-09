@@ -1,0 +1,26 @@
+
+<app-loading [isLoading]="(isLoading$ | async) ?? false"></app-loading>
+<div *ngIf="isLoaded">
+  <div id="container" class="mb-3">
+    <form method="post" [formGroup]="formVeiculo" (ngSubmit)="acaoVeiculo()">
+      <label for="montadora" class="form-label">Montadora</label>
+      <input type="text" class="form-control" id="montadora" formControlName="montadora" placeholder="Ex.: Chevrolet">
+
+      <label for="modelo" class="form-label">Modelo</label>
+      <input type="text" class="form-control" id="modelo" formControlName="modelo" placeholder="Ex.: Onix">
+
+      <label for="placa" class="form-label">Placa</label>
+      <input type="text" class="form-control" id="placa" formControlName="placa" placeholder="Ex.: ECR5B01">
+
+      <input type="hidden" formControlName="id" value="{{acao == 1 ? '' : veiculo.id}}">
+      <input type="hidden" formControlName="dtRegistro" value="{{acao == 1 ? '' : veiculo.dtRegistro}}">
+      <input type="hidden" formControlName="versao" value="{{acao == 1 ? '' : veiculo.versao}}">
+
+      <div class="buttons">
+        <button type="submit" class="btn btn-primary" [disabled]="!formVeiculo.valid">{{ acao === 1 ? 'Cadastrar' : 'Editar' }}</button>
+        <button type="reset" class="btn btn-warning" >Limpar campos</button>
+      </div>
+    </form>
+  </div>
+</div>
+

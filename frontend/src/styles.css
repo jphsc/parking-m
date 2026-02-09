@@ -1,0 +1,57 @@
+
+html, body {
+  height: 100%;
+}
+body {
+  margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.botao {
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 10px;
+  margin: auto;
+  transition: all 0.5s;
+}
+
+.tabela-generica {
+  width: 100%;
+  border-collapse: collapse;
+  margin: auto;
+}
+
+.tabela-generica th,
+.tabela-generica td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: center;
+}
+
+.tabela-generica th {
+  background-color: #f2f2f2;
+}
+
+.btn-acao {
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-acao:hover {
+  color: black;
+}
+
+.toast-sucesso {
+  --mdc-snackbar-container-color: #2e7d32;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #000000;
+}
+
+.toast-erro {
+  --mdc-snackbar-container-color: #d32f2f;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #000000;
+}

@@ -1,0 +1,46 @@
+<app-loading [isLoading]="(isLoading$ | async) ?? false"></app-loading>
+<div *ngIf="isLoaded">
+  <form method="post" [formGroup]="formRegraFinanc" (ngSubmit)="acaoRegra()">
+    <label for="descricao" class="form-label">Descricao</label>
+    <input type="text" class="form-control" id="descricao" formControlName="descricao" placeholder="Ex.: Diário">
+
+    <label for="valor" class="form-label">Valor</label>
+    <input currencyMask type="text" class="form-control" id="valor" formControlName="valor" placeholder="Ex.: 3,0">
+
+    <label for="tipoCobranca" class="form-label">Tipo Cobrança</label>
+    <div class="input-group mb-3">      <select class="form-select" id="tipoCobranca" >
+        <option *ngFor="let tp of listaTpCobranca" value="{{tp.id}}">{{tp.descricao}}</option>
+      </select>
+    </div>
+
+    <label for="tipoMovimento" class="form-label">Tipo Movimento</label>
+     <div class="input-group mb-3">
+      <select class="form-select" id="tipoMovimento" >
+        <option *ngFor="let tp of listaTpMov" value="{{tp.id}}">{{tp.descricao}}</option>
+      </select>
+    </div>
+
+    <label for="dtHrInicioValidade" class="form-label">Início validade</label>
+    <input type="date" class="form-control" id="dtHrInicioValidade" formControlName="dtInicioValidade">
+
+    <label for="dtHrFimValidade" class="form-label">Fim validade</label>
+    <input type="date" class="form-control" id="dtHrFimValidade" formControlName="dtFimValidade">
+
+    <div *ngIf="acao == 0">
+      <label for="situacao" class="form-label">Situacao</label>
+      <div class="input-group mb-3">
+        <select class="form-select" id="situacao" >
+          <option *ngFor="let tp of listaSituacao" value="{{tp.id}}">{{tp.descricao}}</option>
+        </select>
+      </div>
+    </div>
+
+    <input type="hidden" formControlName="id" value="{{acao == 1 ? '' : regra.id}}">
+    <input type="hidden" formControlName="versao" value="{{acao == 1 ? '' : regra.versao}}">
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-primary" [disabled]="!formRegraFinanc.valid">{{ acao === 1 ? 'Cadastrar' : 'Editar' }}</button>
+        <button type="reset" class="btn btn-warning" >Limpar campos</button>
+    </div>
+  </form>
+</div>

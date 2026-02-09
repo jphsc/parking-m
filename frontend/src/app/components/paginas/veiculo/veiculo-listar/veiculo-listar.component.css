@@ -1,0 +1,14 @@
+.lista-veiculos{
+  display: flex;
+  flex-direction: column;
+  width: inherit;
+  height: inherit;
+  align-items: center;
+}
+
+.el-pagination {
+  display: flex;
+  position: fixed;
+  box-sizing: border-box;
+  bottom: 30px;
+}

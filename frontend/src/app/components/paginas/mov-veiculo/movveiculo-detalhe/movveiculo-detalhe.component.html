@@ -1,0 +1,28 @@
+<app-loading [isLoading]="(isLoading$ | async) ?? false"></app-loading>
+<div *ngIf="isLoaded">
+  <form action="">
+    <div class="input-group mb-3">
+      <span class="input-group-text" id="label-placa">Placa</span>
+      <input id="placa" name="placa" type="text" class="form-control" aria-label="placa" aria-describedby="label-placa" disabled value="{{movimento.placa}}">
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text" id="label-entrada">Entrada</span>
+      <input id="entrada" name="entrada" type="text" class="form-control" aria-label="entrada" aria-describedby="label-entrada" disabled value="{{movimento.dtHrEntrada | date:'dd/MM/yyyy HH:mm'}}">
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text" id="label-saida">Saída</span>
+      <input id="saida" name="saida" [type]="isTrueFalse ? 'text' : 'datetime-local'" class="form-control" aria-label="saida" aria-describedby="label-saida" value="{{movimento.dtHrSaida | date:'dd/MM/yyyy HH:mm'}}" [disabled]="isTrueFalse" [required]="!isTrueFalse">
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text" id="label-tipo-movimento">Tipo do movimento</span>
+      <input id="tipo-movimento" name="tipo-movimento" type="text" class="form-control" aria-label="tipo-movimento" aria-describedby="label-tipo-movimento" disabled value="{{movimento.tipoMovimento}}">
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text" id="label-situacao">Situação do movimento</span>
+      <input id="situacao" name="situacao" type="text" class="form-control" aria-label="situacao" aria-describedby="label-situacao" disabled value="{{movimento.situacao}}">
+    </div>
+    <div *ngIf="!isTrueFalse">
+      <button type="submit" class="btn btn-primary">Finalizar movimento</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,27 @@
+<div class="container">
+ <nav id="container-card-lateral">
+    <ul id="lista">
+      <li [routerLink]="['/home']">
+        <span>Home</span>
+      </li>
+      <li [routerLink]="['/veiculo/cadastrar']" routerLinkActive="rota-ativa">
+        <span>Cadastar Veículo</span>
+      </li>
+      <li [routerLink]="['/veiculo/listar']" routerLinkActive="rota-ativa">
+        <span>Listar Veículos</span>
+      </li>
+      <li [routerLink]="['/movimento/cadastrar']" routerLinkActive="rota-ativa">
+        <span>Gerar movimento de veículo</span>
+      </li>
+      <li [routerLink]="['/movimento/listar']" routerLinkActive="rota-ativa">
+        <span>Listar movimentos de veículo</span>
+      </li>
+      <li [routerLink]="['/regra/cadastrar']" routerLinkActive="rota-ativa">
+        <span>Cadastrar regra financeira</span>
+      </li>
+      <li [routerLink]="['/regra/listar']" routerLinkActive="rota-ativa">
+        <span>Listar regras financeiras</span>
+      </li>
+    </ul>
+  </nav>
+</div>

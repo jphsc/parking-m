@@ -1,0 +1,45 @@
+<div class="div-mov-avulso">
+  <h3 class="titulo-h2">Deseja criar um movimento avulso?</h3>
+  <form class="form-mov-avulso" [formGroup]="placaForm">
+    <label for="placa">Informe a placa</label>
+    <input formControlName="placaInput" type="text" id="placa" placeholder="Ex. ABC1E34" required>
+    <button type="submit" class="btn btn-outline-primary" (click)="gerarMovimentoAvulso()"
+      [disabled]="!placaForm.valid">Incluir Movimento</button>
+  </form>
+</div>
+
+<div class="div-movs-aberto">
+  <h2 class="h3">Movimentos abertos</h2>
+  <app-loading [isLoading]="(isLoading$ | async) ?? false"></app-loading>
+  <div *ngIf="isLoaded">
+    <table class="tabela-generica" *ngIf="movAbertos.length != 0; else semMovimentos">
+      <thead>
+        <tr>
+          <th>Placa</th>
+          <th>Entrada</th>
+          <th>Situação</th>
+          <th>Tipo de movimento</th>
+          <th colspan="2">Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let mov of movAbertos">
+          <td>{{ mov.placa }}</td>
+          <td>{{ mov.dtHrEntrada | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ mov.situacao }}</td>
+          <td>{{ mov.tipoMovimento }}</td>
+          <td>
+            <button class="btn btn-danger btn-acao" (click)="finalizarMovimento(mov.id)">Finalizar</button>
+          </td>
+          <td>
+            <button class="btn btn-success btn-acao" (click)="detalharMovimento(mov.id)">Detalhar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #semMovimentos>
+    <p>Não há movimentos abertos no momento.</p>
+  </ng-template>
+</div>
