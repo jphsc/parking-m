@@ -1,15 +1,11 @@
 package br.com.rhscdeveloper.model;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.DynamicUpdate;
 
-import br.com.rhscdeveloper.enumerator.Enums.SituacaoMovimento;
-import br.com.rhscdeveloper.enumerator.Enums.TipoMovimento;
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,14 +16,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 
 @Entity
 @DynamicUpdate
 @Table(name = "tb_movimento_veiculo")
-public class MovimentoVeiculoVO implements Serializable {
+@AttributeOverride(name = "versao", column = @Column(name = "mvv_versao", nullable = false))
+public class MovimentoVeiculoVO extends BaseVO {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -36,10 +32,10 @@ public class MovimentoVeiculoVO implements Serializable {
 	@Column(name = "mvv_id")
 	private Integer id;
 	
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "mvv_veiculo", nullable = false, updatable = false, referencedColumnName = "vei_id", 
 			foreignKey = @ForeignKey(name = "fk_movimentoveiculo_veiculo_01"))
-	private VeiculoVO veiculoVO;
+	private VeiculoVO veiculo;
 	
 	@Column(name = "mvv_tipo_movimento", nullable = false, updatable = false)
 	private Integer tipoMovimento;
@@ -53,37 +49,42 @@ public class MovimentoVeiculoVO implements Serializable {
 	@Column(name = "mvv_situacao", nullable = false)
 	private Integer situacao;
 
-	@Version
-	@Column(name = "mvv_versao", nullable = false)
-	private LocalDateTime versao;
-	
-	@OneToMany(mappedBy = "idMovimento", fetch = FetchType.LAZY)
-	private List<MovimentoFinanceiroVO> movFinanceiro = new ArrayList<MovimentoFinanceiroVO>();
+	@OneToOne(mappedBy = "movimento", fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL)
+	private MovimentoFinanceiroVO movFinanceiro;
 
 	public MovimentoVeiculoVO() {
 		
 	}
 	
 	public MovimentoVeiculoVO(VeiculoVO veiculoVO, Integer tipoMovimento, LocalDateTime dtHrEntrada, LocalDateTime dtHrSaida,
-			Integer situacao, LocalDateTime versao) {
-		this.veiculoVO = veiculoVO;
+			Integer situacao) {
+		this.veiculo = veiculoVO;
 		this.tipoMovimento = tipoMovimento;
 		this.dtHrEntrada = dtHrEntrada;
 		this.dtHrSaida = dtHrSaida;
 		this.situacao = situacao;
-		this.versao = versao;
 	}
 
 	public MovimentoVeiculoVO(Builder b) {
 		this.id = b.id;
-		this.veiculoVO = b.veiculoVO;
+		this.veiculo = b.veiculoVO;
 		this.tipoMovimento = b.tipoMovimento;
 		this.dtHrEntrada = b.dtHrEntrada;
 		this.dtHrSaida = b.dtHrSaida;
 		this.situacao = b.situacao;
 		this.versao = b.versao;
 	}
+	
+	public MovimentoVeiculoVO(MovimentoVeiculoVO mv) {
+		this.veiculo = mv.veiculo;
+		this.tipoMovimento = mv.tipoMovimento;
+		this.dtHrEntrada = mv.dtHrEntrada;
+		this.dtHrSaida = mv.dtHrSaida;
+		this.situacao = mv.situacao;
+		this.versao = mv.versao;
+	}
 
+	@Override
 	public Integer getId() {
 		return id;
 	}
@@ -93,19 +94,19 @@ public class MovimentoVeiculoVO implements Serializable {
 	}
 
 	public VeiculoVO getVeiculo() {
-		return veiculoVO;
+		return veiculo;
 	}
 
 	public void setVeiculo(VeiculoVO veiculoVO) {
-		this.veiculoVO = veiculoVO;
+		this.veiculo = veiculoVO;
 	}
 
 	public Integer getTipoMovimento() {
 		return tipoMovimento;
 	}
 
-	public void setTipoMovimento(TipoMovimento tipoMovimento) {
-		this.tipoMovimento = tipoMovimento.getId();
+	public void setTipoMovimento(Integer tipoMovimento) {
+		this.tipoMovimento = tipoMovimento;
 	}
 	
 	public LocalDateTime getDtHrEntrada() {
@@ -128,21 +129,12 @@ public class MovimentoVeiculoVO implements Serializable {
 		return situacao;
 	}
 
-	public void setSituacao(SituacaoMovimento situacao) {
-		this.situacao = situacao.getId();
-	}
-
-	public LocalDateTime getVersao() {
-		return versao;
-	}
-
-	public void setVersao(LocalDateTime versao) {
-		this.versao = versao;
+	public void setSituacao(Integer situacao) {
+		this.situacao = situacao;
 	}
 	
 	public MovimentoFinanceiroVO getMovFinanceiro() {
-		
-		return this.movFinanceiro.isEmpty() ? null : movFinanceiro.get(0);
+		return movFinanceiro;
 	}
 
 	@Override
@@ -164,9 +156,19 @@ public class MovimentoVeiculoVO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "MovimentoVeiculoVO [id=" + id + ", veiculoVO=" + veiculoVO + ", tipoMovimento=" + tipoMovimento
+		return "MovimentoVeiculoVO [id=" + id + ", veiculo=" + veiculo + ", tipoMovimento=" + tipoMovimento
 				+ ", dtHrEntrada=" + dtHrEntrada + ", dtHrSaida=" + dtHrSaida + ", situacao=" + situacao + ", versao="
 				+ versao + ", movFinanceiro=" + movFinanceiro + "]";
+	}
+	
+	public void vincularFinanceiro(MovimentoFinanceiroVO financeiro) {
+		if(this.movFinanceiro == financeiro) return;
+		
+	    this.movFinanceiro = financeiro;
+	    
+	    if (financeiro != null) {
+	        financeiro.setMovimento(this);
+	    }
 	}
 
 	public static class Builder {
@@ -216,35 +218,4 @@ public class MovimentoVeiculoVO implements Serializable {
 			return this;
 		}
 	}
-	
-//	public MovimentoFinanceiroVO getMovFinanceiro() {
-//		MovimentoFinanceiroVO mf = MovimentoFinanceiroVO.find("idMovimento = ?1", this).firstResult();
-//		this.movFinanceiro = mf;
-//		return this.movFinanceiro;
-//	}
-//	
-//	public static List<MovimentoVeiculoVO> findAll(MovimentoVeiculoDTO dto){
-//		
-//		Map<String, Object> params = new HashMap<String, Object>();
-//		StringBuilder sb = new StringBuilder(" from MovimentoVeiculoVO mv where true");
-//
-//		if(dto.getDtHrEntrada() != null) {
-//			sb.append(" and dtHrEntrada =: dtHrEntrada");
-//			params.put("dtHrEntrada", dto.getDtHrEntrada());
-//		}
-//		
-//		if(dto.getSituacao() != null && dto.getSituacao() != 0) {
-//			sb.append(" and situacao =: situacao");
-//			params.put("situacao", dto.getSituacao());
-//		}
-//		
-//		if(dto.getPlaca() != null && !dto.getPlaca().equals("")) {
-//			sb.append(" and mv.veiculo.placa =: placa");
-//			params.put("placa", dto.getPlaca());
-//		}
-//		
-//		PanacheQuery<MovimentoVeiculoVO> query = find(sb.toString(), params);
-//		
-//		return query.list();
-//	}
 }

@@ -10,26 +10,26 @@ public class RespostaDTO<T> {
 	private Integer pagina;
 	
 	private RespostaDTO() {
-		
+	
 	}
 	
-	public static <T> RespostaDTO<T> newInstance(T dto, String mensagem) {
+	public static <T> RespostaDTO<T> newInstance(T dto, Integer pagina, String mensagem) {
 		
 		RespostaDTO<T> resposta = new RespostaDTO<T>();
 		resposta.setMensagem(mensagem);
 		resposta.setRegistros(List.of(dto));
-		resposta.setPagina(1);
+		resposta.setPagina(pagina == null || pagina <= 0 ? 1 : pagina + 1);
 		resposta.setQuantidade(1);
 		return resposta;
 	}
 	
-	public static <T> RespostaDTO<T> newInstance(List<T> dto, String mensagem) {
+	public static <T> RespostaDTO<T> newInstance(List<T> dto, Integer pagina, String mensagem) {
 		
 		RespostaDTO<T> resposta = new RespostaDTO<T>();
 		resposta.setMensagem(mensagem);
 		resposta.setRegistros(dto);
-		resposta.setPagina(1);
-		resposta.setQuantidade(1);
+		resposta.setPagina(pagina == null || pagina <= 0 ? 1 : pagina);
+		resposta.setQuantidade(dto.size());
 		return resposta;
 	}
 	

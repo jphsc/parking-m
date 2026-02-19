@@ -1,30 +1,31 @@
 package br.com.rhscdeveloper.dto;
 
-import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
-public class VeiculoDTO implements Serializable {
+import br.com.rhscdeveloper.util.Constantes;
+import jakarta.validation.constraints.Size;
+
+public class VeiculoDTO extends BaseDTO {
 
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
 	private String modelo;
 	private String montadora;
-	private LocalDateTime dtRegistro;
+	private LocalDate dtRegistro;
+	@Size(max = 7, message = Constantes.MSG_ERRO_TAMANHO_PLACA)
 	private String placa;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private LocalDateTime versao;
-	@JsonProperty(access = Access.WRITE_ONLY)
-	private Integer pagina;
 	
 	public VeiculoDTO() {
 		
 	}
 
-	public VeiculoDTO(Integer id, String modelo, String montadora, LocalDateTime dtRegistro, String placa, LocalDateTime versao) {
+	public VeiculoDTO(Integer id, String modelo, String montadora, LocalDate dtRegistro, String placa, LocalDateTime versao) {
 		this.id = id;
 		this.modelo = modelo;
 		this.montadora = montadora;
@@ -66,11 +67,11 @@ public class VeiculoDTO implements Serializable {
 		this.montadora = montadora;
 	}
 
-	public LocalDateTime getDtRegistro() {
+	public LocalDate getDtRegistro() {
 		return dtRegistro;
 	}
 
-	public void setDtRegistro(LocalDateTime dtRegistro) {
+	public void setDtRegistro(LocalDate dtRegistro) {
 		this.dtRegistro = dtRegistro;
 	}
 
@@ -89,19 +90,11 @@ public class VeiculoDTO implements Serializable {
 	public void setVersao(LocalDateTime versao) {
 		this.versao = versao;
 	}
-
-	public Integer getPagina() {
-		return pagina;
-	}
-
-	public void setPagina(Integer pagina) {
-		this.pagina = pagina;
-	}
 	
 	@Override
 	public String toString() {
 		return "VeiculoDTO [id=" + id + ", modelo=" + modelo + ", montadora=" + montadora + ", dtRegistro=" + dtRegistro
-				+ ", placa=" + placa + ", versao=" + versao + ", pagina=" + pagina + "]";
+				+ ", placa=" + placa + ", versao=" + versao + "]";
 	}
 
 	public static class Builder {
@@ -109,7 +102,7 @@ public class VeiculoDTO implements Serializable {
 		private Integer id;
 		private String modelo;
 		private String montadora;
-		private LocalDateTime dtRegistro;
+		private LocalDate dtRegistro;
 		private String placa;
 		private LocalDateTime versao;
 		
@@ -132,7 +125,7 @@ public class VeiculoDTO implements Serializable {
 			return this;
 		}
 
-		public Builder setDtRegistro(LocalDateTime dtRegistro) {
+		public Builder setDtRegistro(LocalDate dtRegistro) {
 			this.dtRegistro = dtRegistro;
 			return this;
 		}

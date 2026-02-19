@@ -3,13 +3,14 @@ package br.com.rhscdeveloper.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import br.com.rhscdeveloper.model.MovimentoFinanceiroVO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MovimentoFinanceiroDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	private Integer idRegra;
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Integer idMovimento;
 	private Double valor;
 	private Integer situacao;
@@ -65,9 +66,5 @@ public class MovimentoFinanceiroDTO implements Serializable {
 
 	public void setVersao(LocalDateTime versao) {
 		this.versao = versao;
-	}
-	
-	public static MovimentoFinanceiroDTO newInstance(MovimentoFinanceiroVO vo) {
-		return new MovimentoFinanceiroDTO(vo.getRegra().getId(), vo.getMovimento().getId(), vo.getValor(), vo.getSituacao(), vo.getVersao());
 	}
 }

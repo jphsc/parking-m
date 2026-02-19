@@ -1,10 +1,12 @@
 package br.com.rhscdeveloper.endpoint;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import br.com.rhscdeveloper.dto.MovimentoVeiculoDTO;
+import br.com.rhscdeveloper.dto.MovimentoVeiculoFiltroDTO;
 import br.com.rhscdeveloper.service.MovimentoVeiculoService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -14,11 +16,12 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
-@Tag(name = "movimento veículo")
+@Tag(name = "Movimentos de veículo")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/movimento-veiculo")
@@ -44,13 +47,13 @@ public class MovimentoVeiculoResource {
 	@Operation(summary = "Obtém movimento de veículo", description = "Obtém movimentos de veículo")
 	@GET
 	@Path("/movimentos")
-	public Response obterMovVeiculos() {
-		return Response.status(Status.OK).entity(service.obterMovsVeiculo()).build();
+	public Response obterMovVeiculos(@Parameter(description = "Número da página", required = true) @QueryParam(value = "pagina") Integer pagina) {
+		return Response.status(Status.OK).entity(service.obterMovsVeiculo(pagina)).build();
 	}
 
 	@Operation(summary = "Obtém movimentos de veículo", description = "Obtém movimentos de veículo conforme filtro")
 	@POST
-	public Response obterMovVeiculos(@RequestBody MovimentoVeiculoDTO dto) {
+	public Response obterMovVeiculos(@RequestBody MovimentoVeiculoFiltroDTO dto) {
 		return Response.status(Status.OK).entity(service.obterMovsVeiculoAbertos(dto)).build();
 	}
 

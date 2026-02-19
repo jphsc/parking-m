@@ -29,7 +29,7 @@ import jakarta.transaction.Transactional;
 
 @Startup
 @ApplicationScoped
-public class Configuration {
+public class InitDataOnDataBase {
 
 	@ConfigProperty(name = "quarkus.datasource.jdbc.url") private String host;
 	@ConfigProperty(name = "quarkus.datasource.username") private String user;
@@ -45,11 +45,9 @@ public class Configuration {
     }
 		
 	public void applyMigrations() {
-		
-		Flyway flyway = null;
+		Flyway flyway = Flyway.configure().dataSource(host, user, password).load();
 		
 		try {
-			flyway = Flyway.configure().dataSource(host, user, password).load();
 			flyway.migrate();
 		} catch (FlywayValidateException e) {
 			e.printStackTrace();
@@ -63,32 +61,33 @@ public class Configuration {
 	protected void init() {
 
 		try {
-//			applyMigrations();
+			applyMigrations();
 			
 			if(vRepository.findAll().list().isEmpty()) {
-				vRepository.persist(new VeiculoVO("HB20", "Hyundai", LocalDateTime.now(), "OTO8226", LocalDateTime.now()));
-				vRepository.persist(new VeiculoVO("Onix", "Chevrolet", LocalDateTime.now(), "OTO8221", LocalDateTime.now()));
-				vRepository.persist(new VeiculoVO("HB20", "Hyundai", LocalDateTime.now(), "OTO8228", LocalDateTime.now()));
+				vRepository.persist(new VeiculoVO("HB20", "HYUNDAI", LocalDate.now(), "OTO8226"));
+				vRepository.persist(new VeiculoVO("ONIX", "CHEVROLET", LocalDate.now(), "OTO8221"));
+				vRepository.persist(new VeiculoVO("HB20", "HYUNDAI", LocalDate.now(), "OTO8228"));
 			}
 			
 			if(rfRepository.findAll().list().isEmpty()) {
-				rfRepository.persist(new RegraFinanceiraVO("Hora semanal", 9.00, TipoCobranca.INDIFERENTE, TipoMovimento.DIA, LocalDate.now(), LocalDate.now(), Situacao.ATIVO, LocalDateTime.now()));
-				rfRepository.persist(new RegraFinanceiraVO("Hora final de semana", 7.00, TipoCobranca.INDIFERENTE, TipoMovimento.FINAL_SEMANA, LocalDate.now(), LocalDate.now(), Situacao.ATIVO, LocalDateTime.now()));
-				rfRepository.persist(new RegraFinanceiraVO("Mensalista em dinheiro", 250.50, TipoCobranca.DINHEIRO, TipoMovimento.MENSALISTA, LocalDate.now(), LocalDate.now(), Situacao.ATIVO, LocalDateTime.now()));
-				rfRepository.persist(new RegraFinanceiraVO("Mensalista no cartão", 270.79, TipoCobranca.CREDITO, TipoMovimento.MENSALISTA, LocalDate.now(), LocalDate.now(), Situacao.ATIVO, LocalDateTime.now()));
-				rfRepository.persist(new RegraFinanceiraVO("Fração de hora util indiferente", 5.50, TipoCobranca.INDIFERENTE, TipoMovimento.DIA, LocalDate.now(), LocalDate.now(), Situacao.ATIVO, LocalDateTime.now()));
-				rfRepository.persist(new RegraFinanceiraVO("Fração de hora final de semana indiferente", 4.00, TipoCobranca.INDIFERENTE, TipoMovimento.FINAL_SEMANA, LocalDate.now(), LocalDate.now(), Situacao.ATIVO, LocalDateTime.now()));
+
+				rfRepository.persist(new RegraFinanceiraVO("HORA SEMANAL", 35.00, TipoCobranca.INDIFERENTE, TipoMovimento.DIA, LocalDate.now().minusDays(5), LocalDate.now(), Situacao.ATIVO));
+				rfRepository.persist(new RegraFinanceiraVO("HORA SEMANAL DESAT", 8.00, TipoCobranca.CREDITO, TipoMovimento.HORA, LocalDate.now().minusDays(5), LocalDate.now().minusDays(2), Situacao.INATIVO));
+				rfRepository.persist(new RegraFinanceiraVO("HORA FINAL DE SEMANA", 7.00, TipoCobranca.INDIFERENTE, TipoMovimento.FINAL_SEMANA, LocalDate.now().minusMonths(2), null, Situacao.ATIVO));
+				rfRepository.persist(new RegraFinanceiraVO("MENSALISTA EM DINHEIRO", 250.50, TipoCobranca.DINHEIRO, TipoMovimento.MENSALISTA, LocalDate.now().minusDays(34), LocalDate.now(), Situacao.ATIVO));
+				rfRepository.persist(new RegraFinanceiraVO("MENSALISTA CARTÃO", 270.79, TipoCobranca.CREDITO, TipoMovimento.MENSALISTA, LocalDate.now().minusWeeks(4), LocalDate.now(), Situacao.ATIVO));
+				rfRepository.persist(new RegraFinanceiraVO("FRAÇÃO HORA UTIL INDIFERENTE", 5.50, TipoCobranca.INDIFERENTE, TipoMovimento.DIA, LocalDate.now().minusYears(1), LocalDate.now(), Situacao.ATIVO));
+				rfRepository.persist(new RegraFinanceiraVO("FRAÇÃO HORA FINAL DE SEMANA INDIFERENTE", 4.00, TipoCobranca.INDIFERENTE, TipoMovimento.FINAL_SEMANA, LocalDate.now().minusDays(2), LocalDate.now(), Situacao.ATIVO));
 			}
 			
 			if(mvRepository.findAll().list().isEmpty()) {
-				mvRepository.persist(new MovimentoVeiculoVO(vRepository.findAll().firstResult(), TipoMovimento.DIA.getId(), LocalDateTime.now(), LocalDateTime.now(), SituacaoMovimento.ENCERRADO.getId(), LocalDateTime.now()));
+				mvRepository.persist(new MovimentoVeiculoVO(vRepository.findAll().firstResult(), TipoMovimento.DIA.getId(), LocalDateTime.now(), LocalDateTime.now(), SituacaoMovimento.ENCERRADO.getId()));
 			}
 			
 			if(mfRepository.findAll().list().isEmpty()) {
 				RegraFinanceiraVO rf = rfRepository.findAll().firstResult();
 				MovimentoVeiculoVO mv = mvRepository.findAll().firstResult();
-				
-				mfRepository.persist(new MovimentoFinanceiroVO(rf, mv, 2.00, SituacaoMovimento.ABERTO, LocalDateTime.now()));
+				mfRepository.persist(new MovimentoFinanceiroVO(rf, mv, 2.00, SituacaoMovimento.ENCERRADO.getId()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

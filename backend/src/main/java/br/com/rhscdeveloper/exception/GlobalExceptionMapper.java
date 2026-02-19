@@ -30,8 +30,6 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
         Integer codigoErro = Constantes.COD_ERRO_INTERNO;
         String mensagem = "Erro interno no servidor";
         
-        LOG.error("Exception: ", exception);
-        
         if (exception instanceof GlobalException globalEx) {
             codigoErro = globalEx.getCodigoErro();
             mensagem = globalEx.getMessage();

@@ -1,11 +1,10 @@
 package br.com.rhscdeveloper.model;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 import org.hibernate.annotations.DynamicUpdate;
 
-import br.com.rhscdeveloper.enumerator.Enums.SituacaoMovimento;
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
@@ -13,71 +12,91 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 
 @Entity
 @DynamicUpdate
 @Table(name = "tb_movimento_financeiro")
-@IdClass(MovimentoFinanceiroId.class)
-public class MovimentoFinanceiroVO implements Serializable {
+@IdClass(MovimentoFinanceiroVOId.class)
+@AttributeOverride(name = "versao", column = @Column(name = "mvf_versao", nullable = false))
+public class MovimentoFinanceiroVO extends BaseVO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @ManyToOne
-    @JoinColumn(name = "mvf_regra", foreignKey = @ForeignKey(name = "fk_movfinanceiro_regrafin_01"))
-    private RegraFinanceiraVO idRegra;
+    @Column(name = "mvf_regra")
+    private Integer idRegra;
 
 	@Id
-    @ManyToOne
+    @Column(name = "mvf_movimento")
+    private Integer idMovimento;
+
+	@ManyToOne
+	@MapsId("idRegra")
+    @JoinColumn(name = "mvf_regra", foreignKey = @ForeignKey(name = "fk_movfinanceiro_regrafin_01"))
+    private RegraFinanceiraVO regra;
+
+	@ManyToOne
+	@MapsId("idMovimento")
     @JoinColumn(name = "mvf_movimento", foreignKey = @ForeignKey(name = "fk_movfinanceiro_movveiculo_01"))
-    private MovimentoVeiculoVO idMovimento;
+    private MovimentoVeiculoVO movimento;
 	
 	@Column(name = "mvf_valor", nullable = true, precision = 2)
 	private Double valor;
 	
 	@Column(name = "mvf_situacao", nullable = false)
 	private Integer situacao;
-	
-	@Version
-	@Column(name = "mvf_versao", nullable = false)
-	private LocalDateTime versao;
-	
+
 	public MovimentoFinanceiroVO() {
 		
 	}
 
-	public MovimentoFinanceiroVO(RegraFinanceiraVO regra, MovimentoVeiculoVO movimento, Double valor, SituacaoMovimento situacao, LocalDateTime versao) {
-		this.idRegra = regra;
-		this.idMovimento = movimento;
+	public MovimentoFinanceiroVO(RegraFinanceiraVO regra, MovimentoVeiculoVO movimento, Double valor, Integer situacao) {
+		this.setRegra(regra);
+		this.setMovimento(movimento);
 		this.valor = valor;
-		this.situacao = situacao.getId();
-		this.versao = versao;
+		this.situacao = situacao;
 	}
-
+	
+	public Integer getIdRegra() {
+		return this.idRegra;
+	}
+	
 	public RegraFinanceiraVO getRegra() {
-		return idRegra;
+		return regra;
 	}
 
-	public void setRegra(RegraFinanceiraVO idRegra) {
-		this.idRegra = idRegra;
+	public void setRegra(RegraFinanceiraVO regra) {
+        this.regra = regra;
+        this.idRegra = (regra != null) ? regra.getId() : null;
+    }
+	
+	public Integer getIdMovimento() {
+		return this.idMovimento;
 	}
-
+	
 	public MovimentoVeiculoVO getMovimento() {
-		return idMovimento;
+		return movimento;
 	}
 
-	public void setMovimento(MovimentoVeiculoVO idMovimento) {
-		this.idMovimento = idMovimento;
-	}
+	public void setMovimento(MovimentoVeiculoVO movimento) {
+		if(this.movimento == movimento) return;
+		
+        this.movimento = movimento;
+        this.idMovimento = (movimento != null) ? movimento.getId() : null;
+        
+        if(movimento != null) {
+        	movimento.vincularFinanceiro(this);
+        }
+    }
 
 	public Double getValor() {
 		return valor;
 	}
 
-	public void setSituacao(SituacaoMovimento situacao) {
-		this.situacao = situacao.getId();
+	public void setSituacao(Integer situacao) {
+		this.situacao = situacao;
 	}
 
 	public Integer getSituacao() {
@@ -88,18 +107,18 @@ public class MovimentoFinanceiroVO implements Serializable {
 		this.valor = valor;
 	}
 
-	public LocalDateTime getVersao() {
-		return versao;
-	}
-
-	public void setVersao(LocalDateTime versao) {
-		this.versao = versao;
-	}
-
 	@Override
 	public String toString() {
 		return "MovimentoFinanceiroVO [idRegra=" + idRegra + ", idMovimento=" + idMovimento + ", valor=" + valor
 				+ ", situacao=" + situacao + ", versao=" + versao + "]";
 	}
+	
+	@Override
+    public MovimentoFinanceiroVOId getId() {
+        if (idRegra == null || idMovimento == null) {
+            return null;
+        }
+        return new MovimentoFinanceiroVOId(idRegra, idMovimento);
+    }
 	
 }

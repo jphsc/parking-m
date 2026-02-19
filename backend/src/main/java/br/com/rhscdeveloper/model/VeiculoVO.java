@@ -1,14 +1,13 @@
 package br.com.rhscdeveloper.model;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.DynamicUpdate;
 
-import br.com.rhscdeveloper.dto.VeiculoDTO;
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,15 +16,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import jakarta.persistence.Version;
 
 @Entity
 @DynamicUpdate
 @Table(name = "tb_veiculo", indexes = {@Index(name="ix_veiculo_01", columnList = "vei_placa")})
-public class VeiculoVO implements Serializable, Comparable<VeiculoVO> {
+@AttributeOverride(name = "versao", column = @Column(name = "vei_versao", nullable = false))
+public class VeiculoVO extends BaseVO implements Comparable<VeiculoVO> {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "vei_id")
@@ -37,15 +36,11 @@ public class VeiculoVO implements Serializable, Comparable<VeiculoVO> {
 	@Column(name = "vei_montadora", nullable = false)
 	private String montadora;
 	
-	@Column(name = "vei_dt_registro", nullable = false)
-	private LocalDateTime dtRegistro;
+	@Column(name = "vei_dt_registro", nullable = false, updatable = false)
+	private LocalDate dtRegistro;
 	
 	@Column(name = "vei_placa", nullable = false, unique = true, length = 7)
 	private String placa;
-	
-	@Version
-	@Column(name = "vei_versao", nullable = false)
-	private LocalDateTime versao;
 	
 	@Transient
 	private List<MovimentoVeiculoVO> movimentos = new ArrayList<>();
@@ -54,21 +49,28 @@ public class VeiculoVO implements Serializable, Comparable<VeiculoVO> {
 		
 	}
 
-	public VeiculoVO(String modelo, String montadora, LocalDateTime dtRegistro, String placa, LocalDateTime versao) {
-		this.modelo = modelo;
-		this.montadora = montadora;
+	public VeiculoVO(String modelo, String montadora, LocalDate dtRegistro, String placa) {
+		this.modelo = modelo.toUpperCase();
+		this.montadora = montadora.toUpperCase();
 		this.dtRegistro = dtRegistro;
 		this.placa = placa.toUpperCase();
-		this.versao = versao;
 	}
 
-	public VeiculoVO(Integer id, String modelo, String montadora, LocalDateTime dtRegistro, String placa, LocalDateTime versao) {
+	public VeiculoVO(Integer id, String modelo, String montadora, LocalDate dtRegistro, String placa) {
 		this.id = id;
-		this.modelo = modelo;
-		this.montadora = montadora;
+		this.modelo = modelo.toUpperCase();
+		this.montadora = montadora.toUpperCase();
 		this.dtRegistro = dtRegistro;
 		this.placa = placa.toUpperCase();
-		this.versao = versao;
+	}
+
+	public VeiculoVO(VeiculoVO vo) {
+		this.id = vo.id;
+		this.modelo = vo.modelo;
+		this.montadora = vo.montadora;
+		this.dtRegistro = vo.dtRegistro;
+		this.placa = vo.placa;
+		this.versao = vo.versao;
 	}
 
 	public Integer getId() {
@@ -84,7 +86,7 @@ public class VeiculoVO implements Serializable, Comparable<VeiculoVO> {
 	}
 
 	public void setModelo(String modelo) {
-		this.modelo = modelo;
+		this.modelo = modelo.toUpperCase();
 	}
 
 	public String getMontadora() {
@@ -92,14 +94,14 @@ public class VeiculoVO implements Serializable, Comparable<VeiculoVO> {
 	}
 
 	public void setMontadora(String montadora) {
-		this.montadora = montadora;
+		this.montadora = montadora.toUpperCase();
 	}
 
-	public LocalDateTime getDtRegistro() {
+	public LocalDate getDtRegistro() {
 		return dtRegistro;
 	}
 
-	public void setDtRegistro(LocalDateTime dtRegistro) {
+	public void setDtRegistro(LocalDate dtRegistro) {
 		this.dtRegistro = dtRegistro;
 	}
 
@@ -109,14 +111,6 @@ public class VeiculoVO implements Serializable, Comparable<VeiculoVO> {
 
 	public void setPlaca(String placa) {
 		this.placa = placa.toUpperCase();
-	}
-
-	public LocalDateTime getVersao() {
-		return versao;
-	}
-
-	public void setVersao(LocalDateTime versao) {
-		this.versao = versao;
 	}
 
 	@Override
@@ -147,21 +141,9 @@ public class VeiculoVO implements Serializable, Comparable<VeiculoVO> {
 		return this.id < o.getId() ? -1 : 1;
 	}
 	
-	public void setMovimentos(List<MovimentoVeiculoVO> movimentos){
-		if(!movimentos.isEmpty()) {
-			movimentos.forEach(this.movimentos::add);
-		}
-	}
-
-	public static VeiculoVO dtoToVo(VeiculoVO voPersistente, VeiculoDTO dto) {
-		voPersistente.id = dto.getId();
-		voPersistente.modelo = dto.getModelo();
-		voPersistente.montadora = dto.getMontadora();
-		voPersistente.dtRegistro = dto.getDtRegistro();
-		voPersistente.placa = dto.getPlaca().toUpperCase();
-		voPersistente.versao = Objects.isNull(dto.getVersao()) ? LocalDateTime.now() : dto.getVersao();
-		
-		return voPersistente;
-	}
-
+//	public void setMovimentos(List<MovimentoVeiculoVO> movimentos){
+//		if(!movimentos.isEmpty()) {
+//			movimentos.forEach(this.movimentos::add);
+//		}
+//	}
 }

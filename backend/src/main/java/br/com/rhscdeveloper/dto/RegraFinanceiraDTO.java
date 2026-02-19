@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class RegraFinanceiraDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -18,8 +16,7 @@ public class RegraFinanceiraDTO implements Serializable {
 	private LocalDate dtInicioValidade;
 	private LocalDate dtFimValidade;
 	private Integer situacao;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	private LocalDateTime versao;	
+	private LocalDateTime versao;
 	
 	public RegraFinanceiraDTO() {
 		

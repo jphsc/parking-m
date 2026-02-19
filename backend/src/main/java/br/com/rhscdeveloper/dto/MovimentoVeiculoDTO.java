@@ -3,6 +3,7 @@ package br.com.rhscdeveloper.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -12,10 +13,13 @@ public class MovimentoVeiculoDTO implements Serializable {
 	
 	private Integer idMovimento;
 	private Integer idVeiculo;
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private Integer idRegra;
 	private String placa;
 	private Integer tipoMovimento;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm[:ss][.SSS]")
 	private LocalDateTime dtHrEntrada;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm[:ss][.SSS]")
 	private LocalDateTime dtHrSaida;
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private MovimentoFinanceiroDTO movimentoFinanceiro;

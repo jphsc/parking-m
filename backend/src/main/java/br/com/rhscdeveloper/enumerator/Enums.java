@@ -1,38 +1,22 @@
 package br.com.rhscdeveloper.enumerator;
-
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import br.com.rhscdeveloper.model.EnumCodId;
 import br.com.rhscdeveloper.util.Constantes;
-import jakarta.validation.constraints.NotNull;
 
 public class Enums {
-
-	// último id reservado = 18
-	public static Object getEnum(Integer id) throws NoSuchMethodException, SecurityException, ClassNotFoundException {
-		
-		return Arrays.stream(Enums.class.getDeclaredClasses())
-		        .filter(Class::isEnum)
-		        .flatMap(c -> Arrays.stream(c.getEnumConstants()))
-		        .filter(e -> {
-		            try {
-		                Method getId = e.getClass().getMethod("getId");
-		                return id.equals(getId.invoke(e));
-		            } catch (Exception ex) {
-		                return false;
-		            }
-		        })
-		        .findFirst()
-		        .orElseThrow(() -> new NoSuchElementException("Enumerador não encontrado"));
-	}
 	
-	public static <E extends Enum<E> & EnumCodId> @NotNull E getEnum(Class<E> enumClass, @NotNull Integer id, String tipoEnum) {
-		return Arrays.stream(enumClass.getEnumConstants())
-			.filter(e -> e.getId().equals(id))
-			.findFirst()
-			.orElseThrow(() -> new NoSuchElementException(String.format(Constantes.MGS_ENUMERADOR_INVALIDO, tipoEnum)));
+	public static <E extends Enum<E> & EnumCodId> E getEnum(Class<E> enumClass, Integer id, String tipoEnum) {
+
+		E resultado = Arrays.stream(enumClass.getEnumConstants())
+				.filter(e -> Objects.equals(e.getId(), id))
+				.findFirst()
+				.orElseThrow(() -> new NoSuchElementException(String.format(Constantes.MGS_ENUMERADOR_INVALIDO, tipoEnum)));
+		
+		return Objects.requireNonNull(resultado);
+		
 	}
 	
 	public enum Booleano implements EnumCodId {
@@ -155,7 +139,7 @@ public class Enums {
 	
 	public enum TipoOperacao implements EnumCodId {
 		
-		CONSULTAR(14, "Consultar"),
+		CONSULTAR_FILTRO(14, "Consultar"),
 		CADASTRAR(15, "Cadastrar"),
 		EDITAR(16, "Editar"),
 		EXCLUIR(17, "Excluir");

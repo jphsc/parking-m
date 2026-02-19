@@ -1,30 +1,30 @@
 package br.com.rhscdeveloper.model;
 
-import java.io.Serializable;
+import static java.util.Objects.nonNull;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 import org.hibernate.annotations.DynamicUpdate;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import br.com.rhscdeveloper.dto.RegraFinanceiraDTO;
 import br.com.rhscdeveloper.enumerator.Enums.Situacao;
 import br.com.rhscdeveloper.enumerator.Enums.TipoCobranca;
 import br.com.rhscdeveloper.enumerator.Enums.TipoMovimento;
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 
 @Entity
 @DynamicUpdate
 @Table(name = "tb_regra_financeira")
-public class RegraFinanceiraVO implements Serializable, Comparable<RegraFinanceiraVO> {
+@AttributeOverride(name = "versao", column = @Column(name = "ref_versao", nullable = false))
+public class RegraFinanceiraVO extends BaseVO implements Comparable<RegraFinanceiraVO> {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -45,7 +45,6 @@ public class RegraFinanceiraVO implements Serializable, Comparable<RegraFinancei
 	@Column(name = "ref_tipo_movimento", nullable = false, updatable = false)
 	private Integer tipoMovimento;
 	
-	@JsonFormat
 	@Column(name = "ref_ini_validade", nullable = false, updatable = false)
 	private LocalDate dtInicioValidade;
 	
@@ -55,16 +54,12 @@ public class RegraFinanceiraVO implements Serializable, Comparable<RegraFinancei
 	@Column(name = "ref_situacao", nullable = false)
 	private Integer situacao;
 	
-	@Version
-	@Column(name = "ref_versao", nullable = false)
-	private LocalDateTime versao;
-	
 	public RegraFinanceiraVO() {
 		
 	}
 
 	public RegraFinanceiraVO(String descricao, Double valor, TipoCobranca tipoCobranca, TipoMovimento tipoMovimento,
-			LocalDate dtInicioValidade, LocalDate dtFimValidade, Situacao situacao, LocalDateTime versao) {
+			LocalDate dtInicioValidade, LocalDate dtFimValidade, Situacao situacao) {
 		this.descricao = descricao;
 		this.valor = valor;
 		this.tipoCobranca = tipoCobranca.getId();
@@ -72,11 +67,10 @@ public class RegraFinanceiraVO implements Serializable, Comparable<RegraFinancei
 		this.dtInicioValidade = dtInicioValidade;
 		this.dtFimValidade = dtFimValidade;
 		this.situacao = situacao.getId();
-		this.versao = versao;
 	}
 
 	public RegraFinanceiraVO(Integer id, String descricao, Double valor, TipoCobranca tipoCobranca, TipoMovimento tipoMovimento,
-			LocalDate dtInicioValidade, LocalDate dtFimValidade, Situacao situacao, LocalDateTime versao) {
+			LocalDate dtInicioValidade, LocalDate dtFimValidade, Situacao situacao) {
 		this.id = id;
 		this.descricao = descricao;
 		this.valor = valor;
@@ -85,7 +79,6 @@ public class RegraFinanceiraVO implements Serializable, Comparable<RegraFinancei
 		this.dtInicioValidade = dtInicioValidade;
 		this.dtFimValidade = dtFimValidade;
 		this.situacao = situacao.getId();
-		this.versao = versao;
 	}
 
 	public RegraFinanceiraVO(Builder b) {
@@ -98,6 +91,18 @@ public class RegraFinanceiraVO implements Serializable, Comparable<RegraFinancei
 		this.dtFimValidade = b.dtFimValidade;
 		this.situacao = b.situacao;
 		this.versao = b.versao;
+	}
+	
+	public RegraFinanceiraVO(RegraFinanceiraVO rf) {
+		this.id = rf.id;
+		this.descricao = rf.descricao;
+		this.valor = rf.valor;
+		this.tipoCobranca = rf.tipoCobranca;
+		this.tipoMovimento = rf.tipoMovimento;
+		this.dtInicioValidade = rf.dtInicioValidade;
+		this.dtFimValidade = rf.dtFimValidade;
+		this.situacao = rf.situacao;
+		this.versao = rf.versao;
 	}
 
 	public Integer getId() {
@@ -162,14 +167,6 @@ public class RegraFinanceiraVO implements Serializable, Comparable<RegraFinancei
 
 	public void setSituacao(Integer situacao) {
 		this.situacao = situacao;
-	}
-
-	public LocalDateTime getVersao() {
-		return versao;
-	}
-
-	public void setVersao(LocalDateTime versao) {
-		this.versao = versao;
 	}
 
 	@Override
@@ -263,17 +260,15 @@ public class RegraFinanceiraVO implements Serializable, Comparable<RegraFinancei
 	}
 
 	public static RegraFinanceiraVO dtoToVo(RegraFinanceiraVO voPersistente, RegraFinanceiraDTO dto) {
-		voPersistente.id = dto.getId();
-		voPersistente.descricao = dto.getDescricao();
-		voPersistente.valor = dto.getValor();
-		voPersistente.tipoCobranca = dto.getTipoCobranca();
-		voPersistente.tipoMovimento = dto.getTipoMovimento();
-		voPersistente.dtInicioValidade = dto.getDtInicioValidade();
-		voPersistente.dtFimValidade = dto.getDtFimValidade();
-		voPersistente.situacao = dto.getSituacao();
-		voPersistente.versao = Objects.isNull(dto.getVersao()) ? LocalDateTime.now() : dto.getVersao();
+		voPersistente.id = nonNull(dto.getId()) ? dto.getId() : voPersistente.getId();;
+		voPersistente.descricao = nonNull(dto.getDescricao()) ? dto.getDescricao() : voPersistente.getDescricao();
+		voPersistente.valor = nonNull(dto.getValor()) ? dto.getValor() : voPersistente.getValor();
+		voPersistente.tipoCobranca = nonNull(dto.getTipoCobranca()) ? dto.getTipoCobranca() : voPersistente.getTipoCobranca();
+		voPersistente.tipoMovimento = nonNull(dto.getTipoMovimento()) ? dto.getTipoMovimento() : voPersistente.getTipoMovimento();
+		voPersistente.dtInicioValidade = nonNull(dto.getDtInicioValidade()) ? dto.getDtInicioValidade() : voPersistente.getDtInicioValidade();
+		voPersistente.dtFimValidade = nonNull(dto.getDtFimValidade()) ? dto.getDtFimValidade() : voPersistente.getDtFimValidade();
+		voPersistente.situacao = nonNull(dto.getSituacao()) ? dto.getSituacao() : voPersistente.getSituacao();
 		
 		return voPersistente;
 	}
-	
 }
