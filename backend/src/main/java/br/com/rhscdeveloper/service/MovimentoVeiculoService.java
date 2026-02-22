@@ -57,7 +57,7 @@ public class MovimentoVeiculoService {
 			Enums.getEnum(TipoMovimento.class, filtro.getTipoMovimento(), Constantes.DESC_ENUM_TIPO_MOVIMENTO);
 			
 			//Thread.sleep(4000);	
-			VeiculoVO veiculo = vRepository.findByIdOptional(filtro.getIdVeiculo()).orElseThrow(() -> new NullPointerException("Veículo de id "+filtro.getIdVeiculo()+" não encontrado"));
+			VeiculoVO veiculo = vRepository.findByIdOptional(filtro.getIdVeiculo()).orElseThrow(() -> new NullPointerException(String.format(Constantes.MSG_ERRO_VEICULO_NAO_ENCONTRADO, filtro.getIdVeiculo())));
 			
 			MovimentoVeiculoVO movVeiculo = new MovimentoVeiculoVO.Builder()
 					.setVeiculoVO(veiculo)
@@ -66,10 +66,10 @@ public class MovimentoVeiculoService {
 					.setSituacao(SituacaoMovimento.ABERTO.getId()).build();
 			
 			if(filtro.getTipoMovimento() == TipoMovimento.FINAL_SEMANA.getId() || filtro.getTipoMovimento() == TipoMovimento.MENSALISTA.getId()) {
-				Objects.requireNonNull(filtro.getIdRegra(), "É necessário informar o id da regra financeira");
+				Objects.requireNonNull(filtro.getIdRegra(), Constantes.MSG_REG_FINAC_SEM_ID);
 				
 				RegraFinanceiraVO regraFinanceira = rfRepository
-						.findByIdOptional(filtro.getIdRegra()).orElseThrow(() -> new NullPointerException("Regra de id "+filtro.getIdRegra()+" não encontrada"));;
+						.findByIdOptional(filtro.getIdRegra()).orElseThrow(() -> new NullPointerException(String.format(Constantes.MSG_REG_NAO_ENCONTRADA, filtro.getIdRegra())));
 				
 				Double valor = this.gerarValorMovimento(movVeiculo, regraFinanceira, filtro.getDtHrEntrada());
 				
@@ -79,7 +79,7 @@ public class MovimentoVeiculoService {
 			
 			MovimentoVeiculoDTO dto = mvMapper.toDto(movVeiculo);
 			
-			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_CADASTRADO);
+			return RespostaDTO.of(dto, null, Constantes.MSG_REGISTRO_CADASTRADO);
 			
 		} catch (NullPointerException e) {
 			LOG.warn(e.getMessage());
@@ -103,7 +103,7 @@ public class MovimentoVeiculoService {
 			MovimentoVeiculoVO vo = mvRepository.findById(id);
 			MovimentoVeiculoDTO dto = mvMapper.toDto(vo);
 			
-			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(dto, null, Constantes.MSG_REGISTROS_ENCONTRADOS);
 		} catch (NullPointerException e) {
 			LOG.warn(e.getMessage());
 			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
@@ -122,7 +122,7 @@ public class MovimentoVeiculoService {
 			List<MovimentoVeiculoVO> movsVeiculo = mvRepository.findAll().list();
 			List<MovimentoVeiculoDTO> resposta = movsVeiculo.stream().map(mvMapper::toDto).collect(Collectors.toList());
 			
-			return RespostaDTO.of(resposta, nroPagina, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(resposta, nroPagina, Constantes.MSG_REGISTROS_ENCONTRADOS);
 		} catch (NullPointerException e) {
 			LOG.warn(e.getMessage());
 			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
@@ -139,7 +139,7 @@ public class MovimentoVeiculoService {
 			List<MovimentoVeiculoVO> movsVeiculo = mvRepository.findAll(filtro);
 			List<MovimentoVeiculoDTO> resposta = movsVeiculo.stream().map(mvMapper::toDto).collect(Collectors.toList());
 			
-			return RespostaDTO.of(resposta, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(resposta, null, Constantes.MSG_REGISTROS_ENCONTRADOS);
 		} catch (NullPointerException e) {
 			LOG.warn(e.getMessage());
 			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
@@ -159,17 +159,15 @@ public class MovimentoVeiculoService {
 			this.validarMovimentoOperacao(filtro, TipoOperacao.EDITAR);
 			
 			MovimentoVeiculoVO mvv = mvRepository
-					.findByIdOptional(filtro.getIdMovimento()).orElseThrow(() -> new NoSuchElementException("Movimento de id "+filtro.getIdMovimento()+" não encontrado"));
+					.findByIdOptional(filtro.getIdMovimento()).orElseThrow(() -> new NoSuchElementException(String.format(Constantes.MSG_MOV_VEI_NAO_ENCONTRADO, filtro.getIdMovimento())));
 			
 			if(mvv.getSituacao().equals(SituacaoMovimento.ENCERRADO.getId())) {
-				throw new IllegalStateException("O movimento informado já está finalizado");
+				throw new IllegalStateException(Constantes.MSG_MOV_VEI_JA_ENCERRADO);
 			}
 			
 			RegraFinanceiraVO regra = nonNull(mvv.getMovFinanceiro()) ? mvv.getMovFinanceiro().getRegra() : rfRepository
-				.findByIdOptional(filtro.getIdRegra()).orElseThrow(() -> new NoSuchElementException("Regra de id não "+filtro.getIdRegra()+" encontrada"));
+				.findByIdOptional(filtro.getIdRegra()).orElseThrow(() -> new NoSuchElementException(String.format(Constantes.MSG_REG_NAO_ENCONTRADA, filtro.getIdRegra())));
 			
-//			RegraFinanceiraVO regra = rfRepository
-//					.findByIdOptional(filtro.getIdRegra()).orElseThrow(() -> new NoSuchElementException("Regra de id não "+filtro.getIdRegra()+" encontrada"));
 			Double valor = gerarValorMovimento(mvv, regra, mvv.getDtHrEntrada());
 			MovimentoFinanceiroVO mvf = mfRepository
 					.findById(new MovimentoFinanceiroVOId(regra.getId(), mvv.getId()));
@@ -186,7 +184,7 @@ public class MovimentoVeiculoService {
 			
 			MovimentoVeiculoDTO dto = mvMapper.toDto(mvv);
 			
-			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_MOV_ENCERRADO);
+			return RespostaDTO.of(dto, null, Constantes.MSG_MOV_VEI_ENCERRADO);
 		} catch(IllegalArgumentException e) {
 			LOG.warn(e.getMessage());
 			throw new GlobalException(Constantes.COD_ERRO_VALIDACAO_REGISTRO, "É necessário informar o identificador do movimento!");

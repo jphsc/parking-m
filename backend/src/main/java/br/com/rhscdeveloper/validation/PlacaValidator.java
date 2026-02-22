@@ -1,5 +1,6 @@
 package br.com.rhscdeveloper.validation;
 
+import br.com.rhscdeveloper.util.Constantes;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -13,7 +14,15 @@ public class PlacaValidator implements ConstraintValidator<Placa, String> {
 			return true;
 		}
 		
-		return value.matches(REGEX_PLACA);
+		boolean isValid = value.matches(REGEX_PLACA);
+		
+		if(!isValid) {
+			context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(Constantes.MSG_ERRO_TAMANHO_PLACA)
+                   .addConstraintViolation();
+		}
+		
+		return isValid;
 	}
 
 }

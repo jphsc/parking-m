@@ -48,7 +48,7 @@ public class RegraFinanceiraService {
 					.findByIdOptional(id).orElseThrow(() -> new NoSuchElementException(Constantes.MSG_REGISTROS_NAO_ENCONTRADOS));
 			RegraFinanceiraDTO dto = regraMapper.voToDto(vo);
 
-			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(dto, null, Constantes.MSG_REGISTROS_ENCONTRADOS);
 		} catch (UnhandledException | NoSuchElementException e) {
 			LOG.info(e.getMessage());
 			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, e.getMessage());
@@ -72,7 +72,7 @@ public class RegraFinanceiraService {
 			
 			List<RegraFinanceiraDTO> dtos = regras.stream().map(regraMapper::voToDto).collect(Collectors.toList());
 			
-			return RespostaDTO.of(dtos, nroPagina, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(dtos, nroPagina, Constantes.MSG_REGISTROS_ENCONTRADOS);
 			
 		} catch (NoSuchElementException e) {
 			LOG.warn(e.getMessage());
@@ -109,7 +109,7 @@ public class RegraFinanceiraService {
 			
 			List<RegraFinanceiraDTO> dtos = regras.stream().map(regraMapper::voToDto).collect(Collectors.toList());
 			
-			return RespostaDTO.of(dtos, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(dtos, null, Constantes.MSG_REGISTROS_ENCONTRADOS);
 		} catch (NoSuchElementException e) {
 			LOG.info(e.getMessage());
 			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, e.getMessage());	
@@ -140,7 +140,7 @@ public class RegraFinanceiraService {
 			RegraFinanceiraVO newVo = this.atualizarRegraFinanceiraTransacional(filtro);
 			RegraFinanceiraDTO dto = regraMapper.voToDto(newVo);
 			
-			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(dto, null, Constantes.MSG_REGISTROS_ENCONTRADOS);
 		} catch (NullPointerException e) {
 			LOG.info(e.getMessage());
 			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
@@ -193,7 +193,7 @@ public class RegraFinanceiraService {
 			
 			vo = this.criarRegraFinanceiraTransacional(vo);
 			RegraFinanceiraDTO dto = regraMapper.voToDto(vo);
-			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_CADASTRADO);
+			return RespostaDTO.of(dto, null, Constantes.MSG_REGISTRO_CADASTRADO);
 			
 		} catch(PropertyValueException e) { 
 			LOG.info(e.getMessage());
@@ -227,7 +227,7 @@ public class RegraFinanceiraService {
 					.orElseThrow(() -> new NoSuchElementException(Constantes.MSG_REGISTROS_NAO_ENCONTRADOS));
 
 			this.deletarRegraFinanceiraTransacional(regra.getId());
-			return new Gson().toJson(Constantes.MSG_SUCESSO_REGISTRO_EXCLUIDO);
+			return new Gson().toJson(Constantes.MSG_REGISTRO_EXCLUIDO);
 			
 		} catch (NoSuchElementException e) {
 			LOG.info(e.getMessage());

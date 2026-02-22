@@ -5,13 +5,10 @@ import java.util.NoSuchElementException;
 import org.hibernate.PropertyValueException;
 import org.jboss.logging.Logger;
 
-import com.fasterxml.jackson.core.JsonParseException;
-
 import br.com.rhscdeveloper.dto.ErroDTO;
 import br.com.rhscdeveloper.util.Constantes;
 import jakarta.ws.rs.NotAllowedException;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.ext.ExceptionMapper;
@@ -24,11 +21,10 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
 	
 	@Override
 	public Response toResponse(Throwable exception) {
-		
 		ErroDTO erroDTO;
         Status statusCode = Status.INTERNAL_SERVER_ERROR;
         Integer codigoErro = Constantes.COD_ERRO_INTERNO;
-        String mensagem = "Erro interno no servidor";
+        String mensagem = Constantes.MSG_ERRO_CAMPOS;
         
         if (exception instanceof GlobalException globalEx) {
             codigoErro = globalEx.getCodigoErro();
@@ -37,22 +33,22 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
             
         } else if (exception instanceof NoSuchElementException) {
             codigoErro = Constantes.COD_ERRO_INEXISTENTE;
-            mensagem = exception.getMessage() != null ? exception.getMessage() : "Registro não encontrado";
+            mensagem = exception.getMessage() != null ? exception.getMessage() : Constantes.MSG_REGISTROS_NAO_ENCONTRADOS;
             statusCode = Status.NOT_FOUND;
             
         } else if (exception instanceof NotFoundException) {
             codigoErro = Constantes.COD_ERRO_INEXISTENTE;
-            mensagem = "Recurso não encontrado";
+            mensagem = Constantes.MSG_RECURSO_NAO_ENCONTRADO;
             statusCode = Status.NOT_FOUND;
             
         } else if (exception instanceof NotAllowedException) {
             codigoErro = Constantes.COD_ERRO_VALIDACAO_METHOD;
-            mensagem = "Método HTTP não permitido para este recurso";
+            mensagem = Constantes.MSG_METOD_HTTP_NAO_PERMITIDO;
             statusCode = Status.METHOD_NOT_ALLOWED;
             
         } else if (exception instanceof PropertyValueException) {
             codigoErro = Constantes.COD_ERRO_VALIDACAO_REGISTRO;
-            mensagem = "Campo obrigatório não preenchido";
+            mensagem = Constantes.MSG_ERRO_CAMPOS;
             statusCode = Status.BAD_REQUEST;
             
         } else if (exception instanceof IllegalArgumentException) {
@@ -79,21 +75,21 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
             mensagem = e.getMessage();
             statusCode = Status.CONFLICT;
             
-        } else if (exception instanceof ProcessingException) {
-            
-        	Throwable causa = exception.getCause();
-            if (causa instanceof JsonParseException) {
-                LOG.error("Erro de parsing JSON: ", causa);
-                codigoErro = Constantes.COD_ERRO_VALIDACAO_METHOD;
-                mensagem = "Erro no formato JSON do corpo da requisição. Verifique a sintaxe.";
-                statusCode = Status.BAD_REQUEST;
-                
-            } else {
-                LOG.error("ProcessingException: ", exception);
-                codigoErro = Constantes.COD_ERRO_VALIDACAO_METHOD;
-                mensagem = "Erro no processamento da requisição";
-                statusCode = Status.BAD_REQUEST;
-            }
+//        } else if (exception instanceof ProcessingException) {
+//            
+//        	Throwable causa = exception.getCause();
+//            if (causa instanceof JsonParseException) {
+//                LOG.error("Erro de parsing JSON: ", causa);
+//                codigoErro = Constantes.COD_ERRO_VALIDACAO_METHOD;
+//                mensagem = "Erro no formato JSON do corpo da requisição. Verifique a sintaxe.";
+//                statusCode = Status.BAD_REQUEST;
+//                
+//            } else {
+//                LOG.error("ProcessingException: ", exception);
+//                codigoErro = Constantes.COD_ERRO_VALIDACAO_METHOD;
+//                mensagem = "Erro no processamento da requisição";
+//                statusCode = Status.BAD_REQUEST;
+//            }
         } else {
             LOG.error("Exceção não tratada: ", exception);
             codigoErro = Constantes.COD_ERRO_INTERNO;

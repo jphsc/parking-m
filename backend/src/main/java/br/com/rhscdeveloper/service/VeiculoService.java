@@ -77,7 +77,7 @@ public class VeiculoService {
 		
 		dto = veiculoMapper.voToDto(voPersistenteId);
 		
-		return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_ATUALIZADO);
+		return RespostaDTO.of(dto, null, Constantes.MSG_REGISTRO_ATUALIZADO);
 	}
 
 	public RespostaDTO<VeiculoResponseDTO> cadastrarVeiculo(VeiculoRequestDTO filtro) {
@@ -92,7 +92,7 @@ public class VeiculoService {
 		vo = criarAtualizarVeiculoBase(vo);
 		 
 		VeiculoResponseDTO dto = veiculoMapper.voToDto(vo);
-		return RespostaDTO.of(dto, Utils.getNroPaginaResp(null), Constantes.MSG_SUCESSO_CADASTRADO);
+		return RespostaDTO.of(dto, Utils.getNroPaginaResp(null), Constantes.MSG_REGISTRO_CADASTRADO);
 	}
 	
 	@Transactional
@@ -117,7 +117,7 @@ public class VeiculoService {
 		
 		veiculoRepository.findByIdOptional(id).orElseThrow(() -> new NoSuchElementException(Constantes.MSG_REGISTROS_NAO_ENCONTRADOS));
 		veiculoRepository.deleteById(id);
-		return new Gson().toJson(Constantes.MSG_SUCESSO_REGISTRO_EXCLUIDO);
+		return new Gson().toJson(Constantes.MSG_REGISTRO_EXCLUIDO);
 	}
 	
 	private void validarVeiculoOperacao(VeiculoRequestDTO dto, TipoOperacao op) {

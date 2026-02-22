@@ -89,6 +89,6 @@ public abstract class Utils {
     }
     
 	public static <T extends BaseVO> String getMensagemBuscaRegistro(T objeto) {
-		return isNull(objeto) ? Constantes.MSG_REGISTROS_NAO_ENCONTRADOS : Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS;
+		return isNull(objeto) ? Constantes.MSG_REGISTROS_NAO_ENCONTRADOS : Constantes.MSG_REGISTROS_ENCONTRADOS;
 	}
 }
