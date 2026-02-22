@@ -1,21 +1,19 @@
 package br.com.rhscdeveloper.exception;
 
-import org.hibernate.exception.ConstraintViolationException;
-
-public class MyConstraintViolationException extends ConstraintViolationException {
+public class RegistroNaoEncontradoException extends NullPointerException {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private String descricao;
 	private Integer codErro;
 	
-	public MyConstraintViolationException(String msg) {
-		super(msg, null, null);
+	public RegistroNaoEncontradoException(String msg) {
+		super(msg);
 		this.descricao = msg;
 	}
 
-	public MyConstraintViolationException(String msg, Integer codErro) {
-		super(msg, null, null);
+	public RegistroNaoEncontradoException(String msg, Integer codErro) {
+		super(msg);
 		this.descricao = msg;
 		this.codErro = codErro;
 	}

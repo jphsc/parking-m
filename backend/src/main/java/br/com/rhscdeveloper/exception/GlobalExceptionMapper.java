@@ -56,15 +56,28 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
             statusCode = Status.BAD_REQUEST;
             
         } else if (exception instanceof IllegalArgumentException) {
+        	LOG.error("IllegalArgumentException interna: ", exception);
             codigoErro = Constantes.COD_ERRO_VALIDACAO_REGISTRO;
             mensagem = exception.getMessage() != null ? exception.getMessage() : "Parâmetro inválido";
             statusCode = Status.BAD_REQUEST;
             
         } else if (exception instanceof NullPointerException) {
             LOG.error("NullPointerException interna: ", exception);
-            codigoErro = Constantes.COD_ERRO_INTERNO;
-            mensagem = "Erro interno no processamento de dados";
-            statusCode = Status.INTERNAL_SERVER_ERROR;
+            codigoErro = Constantes.COD_ERRO_VALIDACAO_REGISTRO;
+            mensagem = exception.getMessage() != null ? exception.getMessage() :Constantes.MSG_ERRO_CAMPOS;
+            statusCode = Status.BAD_REQUEST;
+            
+        } else if (exception instanceof RegistroNaoEncontradoException) {
+            LOG.error("RegistroNaoEncontradoException interna: ", exception);
+            codigoErro = Constantes.COD_ERRO_VALIDACAO_REGISTRO;
+            mensagem = exception.getMessage();
+            statusCode = Status.NOT_FOUND;
+            
+        } else if (exception instanceof ValidacaoConstraintException e) {
+            LOG.error("ValidacaoConstraintException interna: ", exception);
+            codigoErro = Constantes.COD_ERRO_VALIDACAO_REGISTRO;
+            mensagem = e.getMessage();
+            statusCode = Status.CONFLICT;
             
         } else if (exception instanceof ProcessingException) {
             

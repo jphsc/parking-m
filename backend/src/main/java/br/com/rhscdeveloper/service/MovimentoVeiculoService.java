@@ -79,7 +79,7 @@ public class MovimentoVeiculoService {
 			
 			MovimentoVeiculoDTO dto = mvMapper.toDto(movVeiculo);
 			
-			return RespostaDTO.newInstance(dto, null, Constantes.MSG_SUCESSO_CADASTRADO);
+			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_CADASTRADO);
 			
 		} catch (NullPointerException e) {
 			LOG.warn(e.getMessage());
@@ -103,10 +103,10 @@ public class MovimentoVeiculoService {
 			MovimentoVeiculoVO vo = mvRepository.findById(id);
 			MovimentoVeiculoDTO dto = mvMapper.toDto(vo);
 			
-			return RespostaDTO.newInstance(dto, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
 		} catch (NullPointerException e) {
 			LOG.warn(e.getMessage());
-			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_ERRO_NAO_ENCONTRADO);
+			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
 			
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace());
@@ -122,10 +122,10 @@ public class MovimentoVeiculoService {
 			List<MovimentoVeiculoVO> movsVeiculo = mvRepository.findAll().list();
 			List<MovimentoVeiculoDTO> resposta = movsVeiculo.stream().map(mvMapper::toDto).collect(Collectors.toList());
 			
-			return RespostaDTO.newInstance(resposta, nroPagina, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(resposta, nroPagina, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
 		} catch (NullPointerException e) {
 			LOG.warn(e.getMessage());
-			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_ERRO_NAO_ENCONTRADO);
+			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
 			
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace());
@@ -139,10 +139,10 @@ public class MovimentoVeiculoService {
 			List<MovimentoVeiculoVO> movsVeiculo = mvRepository.findAll(filtro);
 			List<MovimentoVeiculoDTO> resposta = movsVeiculo.stream().map(mvMapper::toDto).collect(Collectors.toList());
 			
-			return RespostaDTO.newInstance(resposta, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(resposta, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
 		} catch (NullPointerException e) {
 			LOG.warn(e.getMessage());
-			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_ERRO_NAO_ENCONTRADO);
+			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
 			
 		} catch (Exception e) {
 			LOG.error(e.getStackTrace());
@@ -186,7 +186,7 @@ public class MovimentoVeiculoService {
 			
 			MovimentoVeiculoDTO dto = mvMapper.toDto(mvv);
 			
-			return RespostaDTO.newInstance(dto, null, Constantes.MSG_SUCESSO_MOV_ENCERRADO);
+			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_MOV_ENCERRADO);
 		} catch(IllegalArgumentException e) {
 			LOG.warn(e.getMessage());
 			throw new GlobalException(Constantes.COD_ERRO_VALIDACAO_REGISTRO, "É necessário informar o identificador do movimento!");
@@ -201,7 +201,7 @@ public class MovimentoVeiculoService {
 			
 		} catch(NullPointerException e) {
 			LOG.warn(e.getMessage());
-			throw new GlobalException(Constantes.COD_ERRO_VALIDACAO_REGISTRO, Constantes.MSG_ERRO_NULL);
+			throw new GlobalException(Constantes.COD_ERRO_VALIDACAO_REGISTRO, Constantes.MSG_ERRO_CAMPOS);
 			
 		} catch (Exception e) {
 			LOG.error(e.getMessage());

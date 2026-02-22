@@ -4,19 +4,18 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import br.com.rhscdeveloper.dto.VeiculoDTO;
-import br.com.rhscdeveloper.dto.VeiculoFiltroDTO;
+import br.com.rhscdeveloper.dto.VeiculoResponseDTO;
+import br.com.rhscdeveloper.dto.VeiculoRequestDTO;
 import br.com.rhscdeveloper.model.VeiculoVO;
 
 @Mapper(componentModel = "cdi") 
 public interface VeiculoMapper {
 
-	VeiculoDTO voToDto(final VeiculoVO entity);
+	VeiculoResponseDTO voToDto(final VeiculoVO entity);
 	
-	@Mapping(target = "versao", ignore = true)
-	VeiculoDTO recordToDto(VeiculoFiltroDTO vo);
+	VeiculoResponseDTO recordToDto(VeiculoRequestDTO vo);
 	
 	@Mapping(target = "dtRegistro", ignore = true)
 	@Mapping(target = "versao", ignore = true)
-	void updateVoFromDto(VeiculoDTO dto, @MappingTarget VeiculoVO vo);
+	void updateVoFromDto(VeiculoResponseDTO dto, @MappingTarget VeiculoVO vo);
 }

@@ -1,5 +1,7 @@
 package br.com.rhscdeveloper.util;
 
+import static java.util.Objects.isNull;
+
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
@@ -77,10 +79,16 @@ public abstract class Utils {
     }
     
     public static Integer getNroPagina(Integer nroPagina) {
-    	return nroPagina < 0 ? 0 : nroPagina - 1;
+    	Integer aux = isNull(nroPagina) ? 0 : nroPagina;
+    	return aux < 0 ? 0 : aux - 1;
     }
     
     public static Integer getNroPaginaResp(Integer nroPagina) {
-    	return nroPagina < 0 ? 1 : nroPagina + 1;
+    	Integer aux = isNull(nroPagina) ? 0 : nroPagina;
+    	return aux < 0 ? 1 : aux + 1;
     }
+    
+	public static <T extends BaseVO> String getMensagemBuscaRegistro(T objeto) {
+		return isNull(objeto) ? Constantes.MSG_REGISTROS_NAO_ENCONTRADOS : Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS;
+	}
 }

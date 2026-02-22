@@ -45,10 +45,10 @@ public class RegraFinanceiraService {
 			//Thread.sleep(4000);
 			
 			RegraFinanceiraVO vo = regraFinanceiraRepository
-					.findByIdOptional(id).orElseThrow(() -> new NoSuchElementException(Constantes.MSG_ERRO_NAO_ENCONTRADO));
+					.findByIdOptional(id).orElseThrow(() -> new NoSuchElementException(Constantes.MSG_REGISTROS_NAO_ENCONTRADOS));
 			RegraFinanceiraDTO dto = regraMapper.voToDto(vo);
 
-			return RespostaDTO.newInstance(dto, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
 		} catch (UnhandledException | NoSuchElementException e) {
 			LOG.info(e.getMessage());
 			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, e.getMessage());
@@ -67,12 +67,12 @@ public class RegraFinanceiraService {
 			List<RegraFinanceiraVO> regras = regraFinanceiraRepository.findAll(nroPagina);
 			
 			if(regras.isEmpty()) {
-				throw new NoSuchElementException(Constantes.MSG_ERRO_NAO_ENCONTRADO);
+				throw new NoSuchElementException(Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
 			}
 			
 			List<RegraFinanceiraDTO> dtos = regras.stream().map(regraMapper::voToDto).collect(Collectors.toList());
 			
-			return RespostaDTO.newInstance(dtos, nroPagina, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(dtos, nroPagina, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
 			
 		} catch (NoSuchElementException e) {
 			LOG.warn(e.getMessage());
@@ -104,12 +104,12 @@ public class RegraFinanceiraService {
 			List<RegraFinanceiraVO> regras = regraFinanceiraRepository.findAll(filtro);
 			
 			if(regras.isEmpty()) {
-				throw new NoSuchElementException(Constantes.MSG_ERRO_NAO_ENCONTRADO);
+				throw new NoSuchElementException(Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
 			}
 			
 			List<RegraFinanceiraDTO> dtos = regras.stream().map(regraMapper::voToDto).collect(Collectors.toList());
 			
-			return RespostaDTO.newInstance(dtos, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(dtos, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
 		} catch (NoSuchElementException e) {
 			LOG.info(e.getMessage());
 			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, e.getMessage());	
@@ -130,7 +130,7 @@ public class RegraFinanceiraService {
 		try {
 			//Thread.sleep(4000);	
 			if(filtro.id() <= 0) {
-				throw new NoSuchFieldError(Constantes.MSG_ERRO_ID);
+				throw new NoSuchFieldError(Constantes.MSG_SEM_ID_REGISTRO);
 			}
 
 			Enums.getEnum(TipoCobranca.class, filtro.tipoCobranca(), Constantes.DESC_ENUM_TIPO_COBRANCA);
@@ -140,10 +140,10 @@ public class RegraFinanceiraService {
 			RegraFinanceiraVO newVo = this.atualizarRegraFinanceiraTransacional(filtro);
 			RegraFinanceiraDTO dto = regraMapper.voToDto(newVo);
 			
-			return RespostaDTO.newInstance(dto, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
+			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_REGISTROS_ENCONTRADOS);
 		} catch (NullPointerException e) {
 			LOG.info(e.getMessage());
-			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_ERRO_NAO_ENCONTRADO);
+			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
 			
 		} catch (NoSuchFieldError e) {
 			LOG.info(e.getMessage());
@@ -155,7 +155,7 @@ public class RegraFinanceiraService {
 			
 		} catch(PropertyValueException e) { 
 			LOG.info(e.getMessage());
-			throw new GlobalException(Constantes.COD_ERRO_VALIDACAO_REGISTRO, Constantes.MSG_ERRO_NULL);
+			throw new GlobalException(Constantes.COD_ERRO_VALIDACAO_REGISTRO, Constantes.MSG_ERRO_CAMPOS);
 		
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
@@ -193,11 +193,11 @@ public class RegraFinanceiraService {
 			
 			vo = this.criarRegraFinanceiraTransacional(vo);
 			RegraFinanceiraDTO dto = regraMapper.voToDto(vo);
-			return RespostaDTO.newInstance(dto, null, Constantes.MSG_SUCESSO_CADASTRADO);
+			return RespostaDTO.of(dto, null, Constantes.MSG_SUCESSO_CADASTRADO);
 			
 		} catch(PropertyValueException e) { 
 			LOG.info(e.getMessage());
-			throw new GlobalException(Constantes.COD_ERRO_VALIDACAO_REGISTRO, Constantes.MSG_ERRO_NULL);
+			throw new GlobalException(Constantes.COD_ERRO_VALIDACAO_REGISTRO, Constantes.MSG_ERRO_CAMPOS);
 			
 		} catch (NoSuchElementException e) {
 			LOG.info(e.getMessage());
@@ -224,14 +224,14 @@ public class RegraFinanceiraService {
 		try {
 			//Thread.sleep(4000);	
 			RegraFinanceiraVO regra = regraFinanceiraRepository.findByIdOptional(id)
-					.orElseThrow(() -> new NoSuchElementException(Constantes.MSG_ERRO_NAO_ENCONTRADO));
+					.orElseThrow(() -> new NoSuchElementException(Constantes.MSG_REGISTROS_NAO_ENCONTRADOS));
 
 			this.deletarRegraFinanceiraTransacional(regra.getId());
-			return new Gson().toJson(Constantes.MSG_SUCESSO_EXCLUIDO);
+			return new Gson().toJson(Constantes.MSG_SUCESSO_REGISTRO_EXCLUIDO);
 			
 		} catch (NoSuchElementException e) {
 			LOG.info(e.getMessage());
-			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_ERRO_NAO_ENCONTRADO);
+			throw new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
 			
 		} catch (ArcUndeclaredThrowableException e) {
 			LOG.info(e.getCause());

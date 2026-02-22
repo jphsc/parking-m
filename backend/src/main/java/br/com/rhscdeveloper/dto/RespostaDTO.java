@@ -1,10 +1,13 @@
 package br.com.rhscdeveloper.dto;
 
+import static java.util.Objects.isNull;
+
+import java.util.Collections;
 import java.util.List;
 
 public class RespostaDTO<T> {
 
-	private List<?> registros;
+	private List<T> registros;
 	private String mensagem;
 	private Integer quantidade;
 	private Integer pagina;
@@ -13,31 +16,31 @@ public class RespostaDTO<T> {
 	
 	}
 	
-	public static <T> RespostaDTO<T> newInstance(T dto, Integer pagina, String mensagem) {
+	public static <T> RespostaDTO<T> of(T dto, Integer pagina, String mensagem) {
 		
 		RespostaDTO<T> resposta = new RespostaDTO<T>();
 		resposta.setMensagem(mensagem);
-		resposta.setRegistros(List.of(dto));
-		resposta.setPagina(pagina == null || pagina <= 0 ? 1 : pagina + 1);
-		resposta.setQuantidade(1);
+		resposta.setRegistros(validarRegsDto(dto));
+		resposta.setPagina(pagina);
+		resposta.setQuantidade(isNull(dto) ? 0 : 1);
 		return resposta;
 	}
 	
-	public static <T> RespostaDTO<T> newInstance(List<T> dto, Integer pagina, String mensagem) {
+	public static <T> RespostaDTO<T> of(List<T> dto, Integer pagina, String mensagem) {
 		
 		RespostaDTO<T> resposta = new RespostaDTO<T>();
 		resposta.setMensagem(mensagem);
 		resposta.setRegistros(dto);
-		resposta.setPagina(pagina == null || pagina <= 0 ? 1 : pagina);
-		resposta.setQuantidade(dto.size());
+		resposta.setPagina(pagina);
+		resposta.setQuantidade(isNull(dto) ? 0 : dto.size());
 		return resposta;
 	}
 	
-	public List<?> getRegistros() {
+	public List<T> getRegistros() {
 		return registros;
 	}
 
-	public void setRegistros(List<?> registros) {
+	public void setRegistros(List<T> registros) {
 		this.registros = registros;
 	}
 
@@ -63,5 +66,9 @@ public class RespostaDTO<T> {
 
 	public void setPagina(Integer pagina) {
 		this.pagina = pagina;
+	}
+	
+	private static <T> List<T> validarRegsDto(T dto){
+		return dto == null ? Collections.emptyList() : List.of(dto);
 	}
 }
