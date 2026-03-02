@@ -1,9 +1,12 @@
 package br.com.rhscdeveloper.util;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import br.com.rhscdeveloper.dto.BaseDTO;
@@ -78,7 +81,7 @@ public abstract class Utils {
         return null;
     }
     
-    public static Integer getNroPagina(Integer nroPagina) {
+    public static Integer getNroPaginaConsulta(Integer nroPagina) {
     	Integer aux = isNull(nroPagina) ? 0 : nroPagina;
     	return aux < 0 ? 0 : aux - 1;
     }
@@ -90,5 +93,39 @@ public abstract class Utils {
     
 	public static <T extends BaseVO> String getMensagemBuscaRegistro(T objeto) {
 		return isNull(objeto) ? Constantes.MSG_REGISTROS_NAO_ENCONTRADOS : Constantes.MSG_REGISTROS_ENCONTRADOS;
+	}
+    
+	public static <T extends BaseVO> String getMensagemBuscaRegistro(List<T> objeto) {
+		return objeto.isEmpty() ? Constantes.MSG_REGISTROS_NAO_ENCONTRADOS : Constantes.MSG_REGISTROS_ENCONTRADOS;
+	}
+	
+	@SuppressWarnings({ "null", "unlikely-arg-type" })
+	public static <V extends BaseVO, D extends BaseDTO> void updateVoToDto(V vo, D dto) {
+		
+		List<String> camposIgnorados = new ArrayList<String>(Arrays.asList("id", "versao"));
+		Field[] camposDto = dto.getClass().getDeclaredFields();
+		
+		try {
+			for(Field campoDto : camposDto) {
+				if(camposIgnorados.contains(campoDto)) continue;
+				
+				campoDto.setAccessible(true);
+				Object valorCampoDto = campoDto.get(dto);
+				
+				if(nonNull(valorCampoDto)) {
+					Field campoVo = vo.getClass().getDeclaredField(campoDto.getName());
+					
+					campoVo.setAccessible(true);
+					
+					Object currentValue = campoVo.get(vo);
+                    if (!Objects.equals(valorCampoDto, currentValue)) {
+                    	campoVo.set(vo, valorCampoDto);
+                    }
+				}
+			}
+		} catch (Exception e) {
+			throw new GlobalException(Constantes.COD_ERRO_SERVIDOR_INTERNO, Constantes.MSG_ERRO_GENERICO);
+		}
+		
 	}
 }

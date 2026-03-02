@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import org.hibernate.annotations.DynamicUpdate;
 
-import br.com.rhscdeveloper.dto.RegraFinanceiraDTO;
+import br.com.rhscdeveloper.dto.RegraFinResponseDTO;
 import br.com.rhscdeveloper.enumerator.Enums.Situacao;
 import br.com.rhscdeveloper.enumerator.Enums.TipoCobranca;
 import br.com.rhscdeveloper.enumerator.Enums.TipoMovimento;
@@ -259,7 +259,7 @@ public class RegraFinanceiraVO extends BaseVO implements Comparable<RegraFinance
 		}
 	}
 
-	public static RegraFinanceiraVO dtoToVo(RegraFinanceiraVO voPersistente, RegraFinanceiraDTO dto) {
+	public static RegraFinanceiraVO dtoToVo(RegraFinanceiraVO voPersistente, RegraFinResponseDTO dto) {
 		voPersistente.id = nonNull(dto.getId()) ? dto.getId() : voPersistente.getId();;
 		voPersistente.descricao = nonNull(dto.getDescricao()) ? dto.getDescricao() : voPersistente.getDescricao();
 		voPersistente.valor = nonNull(dto.getValor()) ? dto.getValor() : voPersistente.getValor();

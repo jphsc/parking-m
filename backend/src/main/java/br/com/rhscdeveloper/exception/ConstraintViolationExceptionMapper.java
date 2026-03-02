@@ -25,7 +25,7 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
         
         String mensagem = exception.getConstraintViolations().stream()
         		.map(violation -> String.format("%s: %s", getFieldName(violation.getPropertyPath().toString()), violation.getMessage()))
-            .collect(Collectors.joining("; "));
+        		.collect(Collectors.joining("; "));
         
         ErroDTO erroDTO = new ErroDTO(Constantes.COD_ERRO_VALIDACAO_REGISTRO, mensagem);
         

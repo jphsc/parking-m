@@ -5,6 +5,8 @@ import static java.util.Objects.isNull;
 import java.util.Collections;
 import java.util.List;
 
+import br.com.rhscdeveloper.util.Utils;
+
 public class RespostaDTO<T> {
 
 	private List<T> registros;
@@ -21,7 +23,7 @@ public class RespostaDTO<T> {
 		RespostaDTO<T> resposta = new RespostaDTO<T>();
 		resposta.setMensagem(mensagem);
 		resposta.setRegistros(validarRegsDto(dto));
-		resposta.setPagina(pagina);
+		resposta.setPagina(Utils.getNroPaginaResp(pagina));
 		resposta.setQuantidade(isNull(dto) ? 0 : 1);
 		return resposta;
 	}
@@ -31,7 +33,7 @@ public class RespostaDTO<T> {
 		RespostaDTO<T> resposta = new RespostaDTO<T>();
 		resposta.setMensagem(mensagem);
 		resposta.setRegistros(dto);
-		resposta.setPagina(pagina);
+		resposta.setPagina(Utils.getNroPaginaResp(pagina));
 		resposta.setQuantidade(isNull(dto) ? 0 : dto.size());
 		return resposta;
 	}

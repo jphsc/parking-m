@@ -50,18 +50,18 @@ public class VeiculoVO extends BaseVO implements Comparable<VeiculoVO> {
 	}
 
 	public VeiculoVO(String modelo, String montadora, LocalDate dtRegistro, String placa) {
-		this.modelo = modelo.toUpperCase();
-		this.montadora = montadora.toUpperCase();
+		this.modelo = modelo;
+		this.montadora = montadora;
 		this.dtRegistro = dtRegistro;
-		this.placa = placa.toUpperCase();
+		this.placa = placa;
 	}
 
 	public VeiculoVO(Integer id, String modelo, String montadora, LocalDate dtRegistro, String placa) {
 		this.id = id;
-		this.modelo = modelo.toUpperCase();
-		this.montadora = montadora.toUpperCase();
+		this.modelo = modelo;
+		this.montadora = montadora;
 		this.dtRegistro = dtRegistro;
-		this.placa = placa.toUpperCase();
+		this.placa = placa;
 	}
 
 	public VeiculoVO(VeiculoVO vo) {
@@ -86,7 +86,7 @@ public class VeiculoVO extends BaseVO implements Comparable<VeiculoVO> {
 	}
 
 	public void setModelo(String modelo) {
-		this.modelo = modelo.toUpperCase();
+		this.modelo = modelo;
 	}
 
 	public String getMontadora() {
@@ -94,7 +94,7 @@ public class VeiculoVO extends BaseVO implements Comparable<VeiculoVO> {
 	}
 
 	public void setMontadora(String montadora) {
-		this.montadora = montadora.toUpperCase();
+		this.montadora = montadora;
 	}
 
 	public LocalDate getDtRegistro() {
@@ -110,7 +110,7 @@ public class VeiculoVO extends BaseVO implements Comparable<VeiculoVO> {
 	}
 
 	public void setPlaca(String placa) {
-		this.placa = placa.toUpperCase();
+		this.placa = placa;
 	}
 
 	@Override
@@ -140,10 +140,4 @@ public class VeiculoVO extends BaseVO implements Comparable<VeiculoVO> {
 	public int compareTo(VeiculoVO o) {
 		return this.id < o.getId() ? -1 : 1;
 	}
-	
-//	public void setMovimentos(List<MovimentoVeiculoVO> movimentos){
-//		if(!movimentos.isEmpty()) {
-//			movimentos.forEach(this.movimentos::add);
-//		}
-//	}
 }

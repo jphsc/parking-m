@@ -3,6 +3,7 @@ package br.com.rhscdeveloper.exception;
 import java.util.NoSuchElementException;
 
 import org.hibernate.PropertyValueException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.jboss.logging.Logger;
 
 import br.com.rhscdeveloper.dto.ErroDTO;
@@ -54,14 +55,23 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (exception instanceof IllegalArgumentException) {
         	LOG.error("IllegalArgumentException interna: ", exception);
             codigoErro = Constantes.COD_ERRO_VALIDACAO_REGISTRO;
-            mensagem = exception.getMessage() != null ? exception.getMessage() : "Parâmetro inválido";
+            mensagem =  "Parâmetro inválido, verifique a documentação da api";
             statusCode = Status.BAD_REQUEST;
             
         } else if (exception instanceof NullPointerException) {
             LOG.error("NullPointerException interna: ", exception);
             codigoErro = Constantes.COD_ERRO_VALIDACAO_REGISTRO;
-            mensagem = exception.getMessage() != null ? exception.getMessage() :Constantes.MSG_ERRO_CAMPOS;
             statusCode = Status.BAD_REQUEST;
+            
+            if(exception.getMessage().contains("pagina")) {
+            	mensagem = Constantes.MSG_ERRO_PAGINA_INVALIDA;
+            } else if(exception.getMessage().contains("necessário")){
+            	mensagem = exception.getMessage();
+            } else if(exception.getMessage().contains("informe um id válido")){
+            	mensagem = exception.getMessage();
+            } else {
+            	mensagem = Constantes.MSG_ERRO_CAMPOS;
+            }
             
         } else if (exception instanceof RegistroNaoEncontradoException) {
             LOG.error("RegistroNaoEncontradoException interna: ", exception);
@@ -75,21 +85,12 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
             mensagem = e.getMessage();
             statusCode = Status.CONFLICT;
             
-//        } else if (exception instanceof ProcessingException) {
-//            
-//        	Throwable causa = exception.getCause();
-//            if (causa instanceof JsonParseException) {
-//                LOG.error("Erro de parsing JSON: ", causa);
-//                codigoErro = Constantes.COD_ERRO_VALIDACAO_METHOD;
-//                mensagem = "Erro no formato JSON do corpo da requisição. Verifique a sintaxe.";
-//                statusCode = Status.BAD_REQUEST;
-//                
-//            } else {
-//                LOG.error("ProcessingException: ", exception);
-//                codigoErro = Constantes.COD_ERRO_VALIDACAO_METHOD;
-//                mensagem = "Erro no processamento da requisição";
-//                statusCode = Status.BAD_REQUEST;
-//            }
+        } else if (exception instanceof ConstraintViolationException e) {
+            LOG.error("ValidacaoConstraintException interna: ", exception);
+            codigoErro = Constantes.COD_ERRO_VALIDACAO_REGISTRO;
+            mensagem = e.getMessage();
+            statusCode = Status.CONFLICT;
+            
         } else {
             LOG.error("Exceção não tratada: ", exception);
             codigoErro = Constantes.COD_ERRO_INTERNO;

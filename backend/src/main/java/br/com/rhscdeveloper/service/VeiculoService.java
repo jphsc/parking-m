@@ -5,7 +5,6 @@ import static java.util.Objects.nonNull;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -15,6 +14,7 @@ import br.com.rhscdeveloper.dto.RespostaDTO;
 import br.com.rhscdeveloper.dto.VeiculoRequestDTO;
 import br.com.rhscdeveloper.dto.VeiculoResponseDTO;
 import br.com.rhscdeveloper.enumerator.Enums.TipoOperacao;
+import br.com.rhscdeveloper.exception.GlobalException;
 import br.com.rhscdeveloper.exception.ValidacaoConstraintException;
 import br.com.rhscdeveloper.mapper.VeiculoMapper;
 import br.com.rhscdeveloper.model.VeiculoVO;
@@ -34,33 +34,42 @@ public class VeiculoService {
 	
 	public RespostaDTO<VeiculoResponseDTO> obterVeiculoById(Integer id) {
 		
-		VeiculoVO vo = veiculoRepository.findByIdOptional(id).orElse(null);
+		VeiculoVO vo = veiculoRepository.findByIdOptional(id)
+				.orElseThrow(() -> new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS));
 		VeiculoResponseDTO dto = veiculoMapper.voToDto(vo);
 		
-		String mensagem = Utils.getMensagemBuscaRegistro(vo);
-		Integer pagina = Utils.getNroPaginaResp(null);
-		
-		return RespostaDTO.of(dto, pagina, mensagem);
+		return RespostaDTO.of(dto, null, Constantes.MSG_REGISTROS_ENCONTRADOS);
 	}
 
 	public RespostaDTO<VeiculoResponseDTO> obterVeiculos(Integer pagina) {
 
-		Integer nroPagina = Utils.getNroPagina(pagina);
+		Integer nroPagina = Utils.getNroPaginaConsulta(pagina);
 		List<VeiculoVO> veiculos = veiculoRepository.findAll(nroPagina);
+		List<VeiculoResponseDTO> dto = veiculos.stream().map(veiculoMapper::voToDto).collect(Collectors.toList());
+		String mensagem = Utils.getMensagemBuscaRegistro(veiculos);
+		return RespostaDTO.of(dto, nroPagina, mensagem);
+	}
+
+	public RespostaDTO<VeiculoResponseDTO> cadastrarVeiculo(VeiculoRequestDTO filtro) {
 		
-		if(veiculos.isEmpty()) {
-			throw new NoSuchElementException(Constantes.MSG_REGISTROS_NAO_ENCONTRADOS);
+		this.validarVeiculoOperacao(filtro, TipoOperacao.CADASTRAR);
+		
+		VeiculoVO vo = veiculoRepository.findByPlaca(filtro.placa());
+		
+		if(vo != null) {
+			throw new ValidacaoConstraintException(Constantes.MSG_ERRO_PLACA_EXISTE);
 		}
 		
-		String mensagem = veiculos.isEmpty() ? Constantes.MSG_REGISTROS_NAO_ENCONTRADOS : Constantes.MSG_REGISTROS_NAO_ENCONTRADOS;
-		
-		List<VeiculoResponseDTO> dto = veiculos.stream().map(veiculoMapper::voToDto).collect(Collectors.toList());
-		return RespostaDTO.of(dto, Utils.getNroPaginaResp(nroPagina), mensagem);
+		vo = new VeiculoVO(filtro.modelo(), filtro.montadora(), LocalDate.now(), filtro.placa());
+		vo = this.criarAtualizarVeiculoBase(vo);
+		 
+		VeiculoResponseDTO dto = veiculoMapper.voToDto(vo);
+		return RespostaDTO.of(dto, null, Constantes.MSG_REGISTRO_CADASTRADO);
 	}
 
 	public RespostaDTO<VeiculoResponseDTO> atualizarVeiculo(VeiculoRequestDTO dtoRequest) {
 		
-		validarVeiculoOperacao(dtoRequest, TipoOperacao.EDITAR);
+		this.validarVeiculoOperacao(dtoRequest, TipoOperacao.EDITAR);
 		
 		VeiculoVO voPersistenteId = veiculoRepository.findByIdOptional(dtoRequest.id()).orElse(null);
 		VeiculoVO voPersistentePlaca = veiculoRepository.findByPlaca(dtoRequest.placa());
@@ -73,26 +82,31 @@ public class VeiculoService {
 		}
 		VeiculoResponseDTO dto = veiculoMapper.recordToDto(dtoRequest);
 		veiculoMapper.updateVoFromDto(dto, voPersistenteId);
-		voPersistenteId = criarAtualizarVeiculoBase(voPersistenteId);
+		voPersistenteId = this.criarAtualizarVeiculoBase(voPersistenteId);
 		
 		dto = veiculoMapper.voToDto(voPersistenteId);
 		
 		return RespostaDTO.of(dto, null, Constantes.MSG_REGISTRO_ATUALIZADO);
 	}
-
-	public RespostaDTO<VeiculoResponseDTO> cadastrarVeiculo(VeiculoRequestDTO filtro) {
+	
+	@Transactional
+	public String deletarVeiculo(Integer id) {
+		veiculoRepository.findByIdOptional(id)
+			.orElseThrow(() -> new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS));
+		veiculoRepository.deleteById(id);
+		return new Gson().toJson(Constantes.MSG_REGISTRO_EXCLUIDO);
+	}
+	
+	private void validarVeiculoOperacao(VeiculoRequestDTO dto, TipoOperacao op) {
 		
-		VeiculoVO vo = veiculoRepository.findByPlaca(filtro.placa());
-		
-		if(nonNull(vo)) {
-			throw new ValidacaoConstraintException(Constantes.MSG_ERRO_PLACA_EXISTE);
+		if(op.equals(TipoOperacao.CADASTRAR)) {
+			Objects.requireNonNull(dto.placa(), Constantes.MSG_SEM_PLACA);
+			Objects.requireNonNull(dto.modelo(), Constantes.MSG_SEM_MODELO);
+			Objects.requireNonNull(dto.montadora(), Constantes.MSG_SEM_MONTADORA);
+			
+		} else if(op.equals(TipoOperacao.EDITAR)) {
+			Objects.requireNonNull(dto.id(), Constantes.MSG_SEM_ID_REGISTRO);
 		}
-		
-		vo = new VeiculoVO(filtro.modelo(), filtro.montadora(), LocalDate.now(), filtro.placa());
-		vo = criarAtualizarVeiculoBase(vo);
-		 
-		VeiculoResponseDTO dto = veiculoMapper.voToDto(vo);
-		return RespostaDTO.of(dto, Utils.getNroPaginaResp(null), Constantes.MSG_REGISTRO_CADASTRADO);
 	}
 	
 	@Transactional
@@ -110,26 +124,6 @@ public class VeiculoService {
 		em.flush();
 		em.refresh(voGerenciado);
 		return voGerenciado;
-	}
-	
-	@Transactional
-	public String deletarVeiculo(Integer id) {
-		
-		veiculoRepository.findByIdOptional(id).orElseThrow(() -> new NoSuchElementException(Constantes.MSG_REGISTROS_NAO_ENCONTRADOS));
-		veiculoRepository.deleteById(id);
-		return new Gson().toJson(Constantes.MSG_REGISTRO_EXCLUIDO);
-	}
-	
-	private void validarVeiculoOperacao(VeiculoRequestDTO dto, TipoOperacao op) {
-		
-		if(op.equals(TipoOperacao.CADASTRAR)) {
-			Objects.requireNonNull(dto.placa(), Constantes.MSG_SEM_PLACA);
-			Objects.requireNonNull(dto.modelo(), Constantes.MSG_SEM_MODELO);
-			Objects.requireNonNull(dto.montadora(), Constantes.MSG_SEM_MONTADORA);
-			
-		} else if(op.equals(TipoOperacao.EDITAR)) {
-			Objects.requireNonNull(dto.id(), Constantes.MSG_SEM_ID_REGISTRO);
-		}
 	}
 }
 

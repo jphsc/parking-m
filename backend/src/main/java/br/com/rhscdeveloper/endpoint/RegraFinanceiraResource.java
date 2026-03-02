@@ -5,9 +5,10 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import br.com.rhscdeveloper.dto.RegraFinanceiraFiltroDTO;
+import br.com.rhscdeveloper.dto.RegraFinRequestDTO;
 import br.com.rhscdeveloper.service.RegraFinanceiraService;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -24,51 +25,41 @@ import jakarta.ws.rs.core.Response.Status;
 @Tag(name = "Regra financeira")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/regra-financeira")
+@Path("/regras-financeiras")
 public class RegraFinanceiraResource {
 
 	@Inject
 	private RegraFinanceiraService service;
 	
-	@Operation(summary = "Cadastrar regra financeira", description = "Cadastrar uma nova regra financeira")
 	@POST
-	@Path("/cadastrar")
-	public Response cadastrarRegraFinanceira(@RequestBody RegraFinanceiraFiltroDTO RegraFinanceira) {
-		return Response.status(Status.CREATED).entity(service.cadastrarRegraFinanceira(RegraFinanceira)).build();
+	@Operation(summary = "Cadastrar regra financeira", description = "Cadastrar uma nova regra financeira")
+	public Response cadastrarRegraFinanceira(@RequestBody @Valid RegraFinRequestDTO request) {
+		return Response.status(Status.CREATED).entity(service.cadastrarRegraFinanceira(request)).build();
 	}
 
-	@Operation(summary = "Obtém uma regra financeira", description = "Obtém uma regra financeira pelo id da regra")
 	@GET
-	@Path("/{idRegra}")
-	public Response obterRegraFinanceira(@Parameter(description = "Identificador da regra") @PathParam("idRegra") Integer id) {
+	@Operation(summary = "Obtém uma regra financeira", description = "Obtém uma regra financeira pelo id da regra")
+	@Path("/{id}")
+	public Response obterRegraFinanceira(@Parameter(description = "Identificador da regra") @PathParam("id") Integer id) {
 		return Response.status(Status.OK).entity(service.obterRegraFinanceiraById(id)).build();
 	}
 
-	// TODO Implementar paginação
-	@Operation(summary = "Obtém regras financeiras", description = "Obtém regras financeiras conforme paginação")
 	@GET
-	@Path("/regras")
+	@Operation(summary = "Obtém regras financeiras", description = "Obtém regras financeiras conforme paginação")
 	public Response obterRegraFinanceiras(@Parameter(description = "Número da página", required = true) @QueryParam(value = "pagina") Integer pagina) {
 		return Response.status(Status.OK).entity(service.obterRegrasFinanceiras(pagina)).build();
 	}
 
-	@Operation(summary = "Obtém regras financeiras por filtro", description = "Obtém regras financeiras por filtro")
-	@POST
-	public Response obterRegraFinanceiras(RegraFinanceiraFiltroDTO filtro) {
-		return Response.status(Status.OK).entity(service.obterRegraFinanceiraFiltro(filtro)).build();
-	}
-
-	@Operation(summary = "Atualiza regra financeira", description = "Atualiza uma regra financeira")
 	@PUT
-	@Path("/atualizar")
-	public Response atualizarRegraFinanceira(@RequestBody RegraFinanceiraFiltroDTO filtro) {
-		return Response.status(Status.OK).entity(service.atualizarRegraFinanceira(filtro)).build();
+	@Operation(summary = "Atualiza regra financeira", description = "Atualiza uma regra financeira")
+	public Response atualizarRegraFinanceira(@RequestBody @Valid RegraFinRequestDTO request) {
+		return Response.status(Status.OK).entity(service.atualizarRegraFinanceira(request)).build();
 	}
 
-	@Operation(summary = "Exclui uma regra financeira", description = "Remove uma regra financeira sem movimento(s) vinculado(s)")
 	@DELETE
-	@Path("/{idRegra}")
-	public Response deletarRegraFinanceira(@PathParam("idRegra") Integer id) {
+	@Path("/{id}")
+	@Operation(summary = "Exclui uma regra financeira", description = "Remove uma regra financeira sem movimento(s) vinculado(s)")
+	public Response deletarRegraFinanceira(@PathParam("id") Integer id) {
 		return Response.status(Status.OK).entity(service.deletarRegraFinanceira(id)).build();
 	}
 }

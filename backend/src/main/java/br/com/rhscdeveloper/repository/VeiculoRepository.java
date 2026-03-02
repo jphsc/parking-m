@@ -12,7 +12,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class VeiculoRepository implements PanacheRepositoryBase<VeiculoVO, Integer> {
 
 	public VeiculoVO findByPlaca(String placa) {
-		return find("placa", placa.toUpperCase()).firstResult();
+		return find("placa", placa).firstResult();
 	}
 	
 	public List<VeiculoVO> findAll(Integer pagina){

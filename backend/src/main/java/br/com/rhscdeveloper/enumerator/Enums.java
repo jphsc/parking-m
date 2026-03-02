@@ -6,6 +6,7 @@ import java.util.Objects;
 import br.com.rhscdeveloper.model.EnumCodId;
 import br.com.rhscdeveloper.util.Constantes;
 
+@SuppressWarnings("null")
 public class Enums {
 	
 	public static <E extends Enum<E> & EnumCodId> E getEnum(Class<E> enumClass, Integer id, String tipoEnum) {

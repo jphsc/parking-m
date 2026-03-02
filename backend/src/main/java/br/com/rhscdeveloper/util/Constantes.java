@@ -25,6 +25,8 @@ public abstract class Constantes {
 	public static final String MSG_REGISTRO_EXCLUIDO = "Registro excluído com sucesso";
 	public static final String MSG_RECURSO_NAO_ENCONTRADO = "Recurso não encontrado";
 	public static final String MSG_METOD_HTTP_NAO_PERMITIDO = "Método HTTP não permitido para este recurso";
+	public static final String NECESSARIO_INFORMAR = "É necesssário informar %s";
+	public static final String DESCRICAO = "descrição";
 	
 	// enumeradores
 	public static final String DESC_ENUM_TIPO_COBRANCA = "Tipo de Cobranca";
@@ -44,6 +46,7 @@ public abstract class Constantes {
 	public static final String MSG_MOV_VEI_ENCERRADO = "Movimento encerrado com sucesso";
 	public static final String MSG_MOV_VEI_NAO_ENCONTRADO = "Movimento de id %d não encontrado";
 	public static final String MSG_MOV_VEI_JA_ENCERRADO = "Movimento de id %d já encerrado";
+	public static final String DT_HR_INI_VALIDADE = "data e hora do início da validade";
 	
 	//regra financeira
 	public static final String MSG_REG_FINAC_SEM_ID = "É necessário informar o id da regra financeira";

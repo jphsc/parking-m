@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class RegraFinanceiraDTO implements Serializable {
+public class RegraFinResponseDTO extends BaseDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -18,11 +18,11 @@ public class RegraFinanceiraDTO implements Serializable {
 	private Integer situacao;
 	private LocalDateTime versao;
 	
-	public RegraFinanceiraDTO() {
+	public RegraFinResponseDTO() {
 		
 	}
 
-	public RegraFinanceiraDTO(Integer id, String descricao, Double valor, Integer tipoCobranca, Integer tipoMovimento,
+	public RegraFinResponseDTO(Integer id, String descricao, Double valor, Integer tipoCobranca, Integer tipoMovimento,
 			LocalDate dtInicioValidade, LocalDate dtFimValidade, Integer situacao, LocalDateTime versao) {
 		this.id = id;
 		this.descricao = descricao;
@@ -35,7 +35,7 @@ public class RegraFinanceiraDTO implements Serializable {
 		this.versao = versao;
 	}
 	
-	public RegraFinanceiraDTO(Builder build) {
+	public RegraFinResponseDTO(Builder build) {
 		this.id = build.id;
 		this.descricao = build.descricao;
 		this.valor = build.valor;
@@ -131,8 +131,8 @@ public class RegraFinanceiraDTO implements Serializable {
 		private Integer situacao;
 		private LocalDateTime versao;
 		
-		public RegraFinanceiraDTO build() {
-			return new RegraFinanceiraDTO(this);
+		public RegraFinResponseDTO build() {
+			return new RegraFinResponseDTO(this);
 		}
 		
 		public Builder setId(Integer id) {
