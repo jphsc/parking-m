@@ -56,7 +56,7 @@ public class MovimentoVeiculoVO extends BaseVO {
 		
 	}
 	
-	public MovimentoVeiculoVO(VeiculoVO veiculoVO, Integer tipoMovimento, LocalDateTime dtHrEntrada, LocalDateTime dtHrSaida,
+	protected MovimentoVeiculoVO(VeiculoVO veiculoVO, Integer tipoMovimento, LocalDateTime dtHrEntrada, LocalDateTime dtHrSaida,
 			Integer situacao) {
 		this.veiculo = veiculoVO;
 		this.tipoMovimento = tipoMovimento;
@@ -64,26 +64,7 @@ public class MovimentoVeiculoVO extends BaseVO {
 		this.dtHrSaida = dtHrSaida;
 		this.situacao = situacao;
 	}
-
-	public MovimentoVeiculoVO(Builder b) {
-		this.id = b.id;
-		this.veiculo = b.veiculoVO;
-		this.tipoMovimento = b.tipoMovimento;
-		this.dtHrEntrada = b.dtHrEntrada;
-		this.dtHrSaida = b.dtHrSaida;
-		this.situacao = b.situacao;
-		this.versao = b.versao;
-	}
 	
-	public MovimentoVeiculoVO(MovimentoVeiculoVO mv) {
-		this.veiculo = mv.veiculo;
-		this.tipoMovimento = mv.tipoMovimento;
-		this.dtHrEntrada = mv.dtHrEntrada;
-		this.dtHrSaida = mv.dtHrSaida;
-		this.situacao = mv.situacao;
-		this.versao = mv.versao;
-	}
-
 	@Override
 	public Integer getId() {
 		return id;
@@ -171,51 +152,8 @@ public class MovimentoVeiculoVO extends BaseVO {
 	    }
 	}
 
-	public static class Builder {
-		private Integer id;
-		private VeiculoVO veiculoVO;
-		private Integer tipoMovimento;
-		private LocalDateTime dtHrEntrada;
-		private LocalDateTime dtHrSaida;
-		private Integer situacao;
-		private LocalDateTime versao;
-		
-		public MovimentoVeiculoVO build() {
-			return new MovimentoVeiculoVO(this);
-		}
-		
-		public Builder setId(Integer id) {
-			this.id = id;
-			return this;
-		}
-		
-		public Builder setVeiculoVO(VeiculoVO veiculoVO) {
-			this.veiculoVO = veiculoVO;
-			return this;
-		}
-		
-		public Builder setTipoMovimento(Integer tipoMovimento) {
-			this.tipoMovimento = tipoMovimento;
-			return this;
-		}
-		public Builder setDtHrEntrada(LocalDateTime dtHrEntrada) {
-			this.dtHrEntrada = dtHrEntrada;
-			return this;
-		}
-		
-		public Builder setDtHrSaida(LocalDateTime dtHrSaida) {
-			this.dtHrSaida = dtHrSaida;
-			return this;
-		}
-		
-		public Builder setSituacao(Integer situacao) {
-			this.situacao = situacao;
-			return this;
-		}
-		
-		public Builder setVersao(LocalDateTime versao) {
-			this.versao = versao;
-			return this;
-		}
+	public static MovimentoVeiculoVO criar(VeiculoVO veiculoVO, Integer tipoMovimento, LocalDateTime dtHrEntrada, LocalDateTime dtHrSaida,
+			Integer situacao) {
+		return new MovimentoVeiculoVO(veiculoVO, tipoMovimento, dtHrEntrada, dtHrSaida, situacao);
 	}
 }

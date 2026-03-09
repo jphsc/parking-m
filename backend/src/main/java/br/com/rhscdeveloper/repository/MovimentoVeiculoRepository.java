@@ -21,10 +21,13 @@ public class MovimentoVeiculoRepository implements PanacheRepositoryBase<Movimen
 		return mf;
 	}
 	
-	public List<MovimentoVeiculoVO> findMovsAbertos(){
+	public List<MovimentoVeiculoVO> findMovsAbertos(Integer pagina){
 		
-		String sb = "from MovimentoVeiculoVO mv where situacao =: situacao";
-		return find(sb.toString(), Sort.by("id"), SituacaoMovimento.ABERTO).list();
+		String query = "from MovimentoVeiculoVO where situacao = ?1";
+		
+		return find(query, Sort.by("id"), SituacaoMovimento.ABERTO.getId())
+				.page(pagina, Constantes.NRO_MAX_REGISTROS_PAGINACAO)
+				.list();
 	}
 	
 	public List<MovimentoVeiculoVO> findMovsPaginado(Integer pagina){

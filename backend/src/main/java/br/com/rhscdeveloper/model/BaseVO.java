@@ -8,7 +8,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Version;
 
 @MappedSuperclass
-public abstract class BaseVO implements Serializable {
+public abstract class BaseVO implements BaseIdentificavel, Serializable {
     
     private static final long serialVersionUID = 1L;
 

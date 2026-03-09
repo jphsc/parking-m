@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class MovimentoFinanceiroDTO implements Serializable {
+public class MovFinanceiroRespDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -16,11 +16,11 @@ public class MovimentoFinanceiroDTO implements Serializable {
 	private Integer situacao;
 	private LocalDateTime versao;
 	
-	public MovimentoFinanceiroDTO() {
+	public MovFinanceiroRespDTO() {
 		
 	}
 
-	public MovimentoFinanceiroDTO(Integer idRegra, Integer idMovimento, Double valor, Integer situacao, LocalDateTime versao) {
+	public MovFinanceiroRespDTO(Integer idRegra, Integer idMovimento, Double valor, Integer situacao, LocalDateTime versao) {
 		this.idRegra = idRegra;
 		this.idMovimento = idMovimento;
 		this.valor = valor;

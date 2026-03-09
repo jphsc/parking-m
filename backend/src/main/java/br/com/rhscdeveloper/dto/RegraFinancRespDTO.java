@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class RegraFinResponseDTO extends BaseDTO implements Serializable {
+import br.com.rhscdeveloper.model.BaseIdentificavel;
+
+public class RegraFinancRespDTO implements BaseIdentificavel, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -18,11 +20,11 @@ public class RegraFinResponseDTO extends BaseDTO implements Serializable {
 	private Integer situacao;
 	private LocalDateTime versao;
 	
-	public RegraFinResponseDTO() {
+	public RegraFinancRespDTO() {
 		
 	}
 
-	public RegraFinResponseDTO(Integer id, String descricao, Double valor, Integer tipoCobranca, Integer tipoMovimento,
+	public RegraFinancRespDTO(Integer id, String descricao, Double valor, Integer tipoCobranca, Integer tipoMovimento,
 			LocalDate dtInicioValidade, LocalDate dtFimValidade, Integer situacao, LocalDateTime versao) {
 		this.id = id;
 		this.descricao = descricao;
@@ -35,7 +37,7 @@ public class RegraFinResponseDTO extends BaseDTO implements Serializable {
 		this.versao = versao;
 	}
 	
-	public RegraFinResponseDTO(Builder build) {
+	public RegraFinancRespDTO(Builder build) {
 		this.id = build.id;
 		this.descricao = build.descricao;
 		this.valor = build.valor;
@@ -131,8 +133,8 @@ public class RegraFinResponseDTO extends BaseDTO implements Serializable {
 		private Integer situacao;
 		private LocalDateTime versao;
 		
-		public RegraFinResponseDTO build() {
-			return new RegraFinResponseDTO(this);
+		public RegraFinancRespDTO build() {
+			return new RegraFinancRespDTO(this);
 		}
 		
 		public Builder setId(Integer id) {

@@ -5,10 +5,14 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import br.com.rhscdeveloper.dto.VeiculoRequestDTO;
+import br.com.rhscdeveloper.dto.VeiculoReqDTO;
 import br.com.rhscdeveloper.service.VeiculoService;
+import br.com.rhscdeveloper.validation.OperacaoValidadorGroup.OnCreate;
+import br.com.rhscdeveloper.validation.OperacaoValidadorGroup.OnUpdate;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.groups.ConvertGroup;
+import jakarta.validation.groups.Default;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -46,13 +50,13 @@ public class VeiculoResource {
 	
 	@POST
 	@Operation(summary = "Cadastra um veículo", description = "Cadastra um novo veículo")
-	public Response cadastrarVeiculo(@RequestBody @Valid VeiculoRequestDTO veiculo) {
+	public Response cadastrarVeiculo(@RequestBody @Valid @ConvertGroup(from = Default.class, to = OnCreate.class) VeiculoReqDTO veiculo) {
 		return Response.status(Status.CREATED).entity(service.cadastrarVeiculo(veiculo)).build();
 	}
 
 	@PUT
 	@Operation(summary = "Atualizar veículo", description = "Atualiza um veículo")
-	public Response atualizarVeiculo(@RequestBody @Valid VeiculoRequestDTO filtro) {
+	public Response atualizarVeiculo(@RequestBody @Valid @ConvertGroup(from = Default.class, to = OnUpdate.class) VeiculoReqDTO filtro) {
 		return Response.ok(service.atualizarVeiculo(filtro)).build();
 	}
 

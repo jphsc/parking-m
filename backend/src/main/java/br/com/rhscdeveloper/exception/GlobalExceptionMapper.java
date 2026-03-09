@@ -62,16 +62,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
             LOG.error("NullPointerException interna: ", exception);
             codigoErro = Constantes.COD_ERRO_VALIDACAO_REGISTRO;
             statusCode = Status.BAD_REQUEST;
-            
-            if(exception.getMessage().contains("pagina")) {
-            	mensagem = Constantes.MSG_ERRO_PAGINA_INVALIDA;
-            } else if(exception.getMessage().contains("necessário")){
-            	mensagem = exception.getMessage();
-            } else if(exception.getMessage().contains("informe um id válido")){
-            	mensagem = exception.getMessage();
-            } else {
-            	mensagem = Constantes.MSG_ERRO_CAMPOS;
-            }
+            mensagem = exception.getMessage();
             
         } else if (exception instanceof RegistroNaoEncontradoException) {
             LOG.error("RegistroNaoEncontradoException interna: ", exception);

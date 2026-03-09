@@ -11,7 +11,7 @@ public class PlacaValidator implements ConstraintValidator<Placa, String> {
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		if(value == null) {
-			return true;
+			return false;
 		}
 		
 		boolean isValid = value.matches(REGEX_PLACA);

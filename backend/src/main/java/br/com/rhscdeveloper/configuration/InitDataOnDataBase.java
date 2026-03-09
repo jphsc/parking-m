@@ -64,24 +64,24 @@ public class InitDataOnDataBase {
 			applyMigrations();
 			
 			if(vRepository.findAll().list().isEmpty()) {
-				vRepository.persist(new VeiculoVO("HB20", "HYUNDAI", LocalDate.now(), "OTO8226"));
-				vRepository.persist(new VeiculoVO("ONIX", "CHEVROLET", LocalDate.now(), "OTO8221"));
-				vRepository.persist(new VeiculoVO("HB20", "HYUNDAI", LocalDate.now(), "OTO8228"));
+				vRepository.persist(VeiculoVO.criar("HB20", "HYUNDAI", "OTO8226"));
+				vRepository.persist(VeiculoVO.criar("ONIX", "CHEVROLET", "OTO8221"));
+				vRepository.persist(VeiculoVO.criar("HB20", "HYUNDAI", "OTO8228"));
 			}
 			
 			if(rfRepository.findAll().list().isEmpty()) {
 
-				rfRepository.persist(new RegraFinanceiraVO("HORA SEMANAL", 35.00, TipoCobranca.INDIFERENTE, TipoMovimento.DIA, LocalDate.now().minusDays(5), LocalDate.now(), Situacao.ATIVO));
-				rfRepository.persist(new RegraFinanceiraVO("HORA SEMANAL DESAT", 8.00, TipoCobranca.CREDITO, TipoMovimento.HORA, LocalDate.now().minusDays(5), LocalDate.now().minusDays(2), Situacao.INATIVO));
-				rfRepository.persist(new RegraFinanceiraVO("HORA FINAL DE SEMANA", 7.00, TipoCobranca.INDIFERENTE, TipoMovimento.FINAL_SEMANA, LocalDate.now().minusMonths(2), null, Situacao.ATIVO));
-				rfRepository.persist(new RegraFinanceiraVO("MENSALISTA EM DINHEIRO", 250.50, TipoCobranca.DINHEIRO, TipoMovimento.MENSALISTA, LocalDate.now().minusDays(34), LocalDate.now(), Situacao.ATIVO));
-				rfRepository.persist(new RegraFinanceiraVO("MENSALISTA CARTÃO", 270.79, TipoCobranca.CREDITO, TipoMovimento.MENSALISTA, LocalDate.now().minusWeeks(4), LocalDate.now(), Situacao.ATIVO));
-				rfRepository.persist(new RegraFinanceiraVO("FRAÇÃO HORA UTIL INDIFERENTE", 5.50, TipoCobranca.INDIFERENTE, TipoMovimento.DIA, LocalDate.now().minusYears(1), LocalDate.now(), Situacao.ATIVO));
-				rfRepository.persist(new RegraFinanceiraVO("FRAÇÃO HORA FINAL DE SEMANA INDIFERENTE", 4.00, TipoCobranca.INDIFERENTE, TipoMovimento.FINAL_SEMANA, LocalDate.now().minusDays(2), LocalDate.now(), Situacao.ATIVO));
+				rfRepository.persist(RegraFinanceiraVO.criar("HORA SEMANAL", 35.00, TipoCobranca.INDIFERENTE.getId(), TipoMovimento.DIA.getId(), LocalDate.now().minusDays(5), LocalDate.now(), Situacao.ATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("HORA SEMANAL DESAT", 8.00, TipoCobranca.CREDITO.getId(), TipoMovimento.HORA.getId(), LocalDate.now().minusDays(5), LocalDate.now().minusDays(2), Situacao.INATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("HORA FINAL DE SEMANA", 7.00, TipoCobranca.INDIFERENTE.getId(), TipoMovimento.FINAL_SEMANA.getId(), LocalDate.now().minusMonths(2), null, Situacao.ATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("MENSALISTA EM DINHEIRO", 250.50, TipoCobranca.DINHEIRO.getId(), TipoMovimento.MENSALISTA.getId(), LocalDate.now().minusDays(34), LocalDate.now(), Situacao.ATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("MENSALISTA CARTÃO", 270.79, TipoCobranca.CREDITO.getId(), TipoMovimento.MENSALISTA.getId(), LocalDate.now().minusWeeks(4), LocalDate.now(), Situacao.ATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("FRAÇÃO HORA UTIL INDIFERENTE", 5.50, TipoCobranca.INDIFERENTE.getId(), TipoMovimento.DIA.getId(), LocalDate.now().minusYears(1), LocalDate.now(), Situacao.ATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("FRAÇÃO HORA FINAL DE SEMANA INDIFERENTE", 4.00, TipoCobranca.INDIFERENTE.getId(), TipoMovimento.FINAL_SEMANA.getId(), LocalDate.now().minusDays(2), LocalDate.now(), Situacao.ATIVO.getId()));
 			}
 			
 			if(mvRepository.findAll().list().isEmpty()) {
-				mvRepository.persist(new MovimentoVeiculoVO(vRepository.findAll().firstResult(), TipoMovimento.DIA.getId(), LocalDateTime.now(), LocalDateTime.now(), SituacaoMovimento.ENCERRADO.getId()));
+				mvRepository.persist(MovimentoVeiculoVO.criar(vRepository.findAll().firstResult(), TipoMovimento.DIA.getId(), LocalDateTime.now(), LocalDateTime.now(), SituacaoMovimento.ENCERRADO.getId()));
 			}
 			
 			if(mfRepository.findAll().list().isEmpty()) {

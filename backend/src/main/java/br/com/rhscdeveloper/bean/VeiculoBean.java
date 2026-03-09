@@ -1,28 +1,43 @@
-package br.com.rhscdeveloper.dto;
+package br.com.rhscdeveloper.bean;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-@AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 @ToString
-public class VeiculoResponseDTO extends BaseDTO {
-
-	private static final long serialVersionUID = 1L;
+public class VeiculoBean extends BaseBean {
 	
 	private Integer id;
 	private String modelo;
 	private String montadora;
 	private LocalDate dtRegistro;
 	private String placa;
-	private LocalDateTime versao;
 	
-	public VeiculoResponseDTO() {
+	public VeiculoBean() {
 		
 	}
-
+	
+	public VeiculoBean(Integer id, String modelo, String montadora, LocalDate dtRegistro, String placa) {
+		this.id = id;
+		this.modelo = modelo;
+		this.montadora = montadora;
+		this.dtRegistro = dtRegistro;
+		this.placa = placa;
+	}
+	
+	public VeiculoBean(String modelo, String montadora, LocalDate dtRegistro, String placa) {
+		this.modelo = modelo;
+		this.montadora = montadora;
+		this.dtRegistro = dtRegistro;
+		this.placa = placa;
+	}
+	
 	public Integer getId() {
 		return id;
 	}
@@ -61,13 +76,5 @@ public class VeiculoResponseDTO extends BaseDTO {
 
 	public void setPlaca(String placa) {
 		this.placa = placa;
-	}
-
-	public LocalDateTime getVersao() {
-		return versao;
-	}
-
-	public void setVersao(LocalDateTime versao) {
-		this.versao = versao;
 	}
 }

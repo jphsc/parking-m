@@ -5,10 +5,14 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import br.com.rhscdeveloper.dto.RegraFinRequestDTO;
+import br.com.rhscdeveloper.dto.RegraFinancReqDTO;
 import br.com.rhscdeveloper.service.RegraFinanceiraService;
+import br.com.rhscdeveloper.validation.OperacaoValidadorGroup.OnCreate;
+import br.com.rhscdeveloper.validation.OperacaoValidadorGroup.OnUpdate;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.groups.ConvertGroup;
+import jakarta.validation.groups.Default;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -33,7 +37,7 @@ public class RegraFinanceiraResource {
 	
 	@POST
 	@Operation(summary = "Cadastrar regra financeira", description = "Cadastrar uma nova regra financeira")
-	public Response cadastrarRegraFinanceira(@RequestBody @Valid RegraFinRequestDTO request) {
+	public Response cadastrarRegraFinanceira(@RequestBody @Valid @ConvertGroup(from = Default.class, to = OnCreate.class) RegraFinancReqDTO request) {
 		return Response.status(Status.CREATED).entity(service.cadastrarRegraFinanceira(request)).build();
 	}
 
@@ -52,7 +56,7 @@ public class RegraFinanceiraResource {
 
 	@PUT
 	@Operation(summary = "Atualiza regra financeira", description = "Atualiza uma regra financeira")
-	public Response atualizarRegraFinanceira(@RequestBody @Valid RegraFinRequestDTO request) {
+	public Response atualizarRegraFinanceira(@RequestBody @Valid @ConvertGroup(from = Default.class, to = OnUpdate.class) RegraFinancReqDTO request) {
 		return Response.status(Status.OK).entity(service.atualizarRegraFinanceira(request)).build();
 	}
 

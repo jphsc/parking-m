@@ -17,7 +17,7 @@ public @interface Enumerador {
 
 	Class<? extends Enum<?>> tipo();
 	
-	String message() default "Valor inválido para o enumerador";
+	String message() default "Valor inválido para o campo";
 
 	Class<?>[] groups() default {};
 	

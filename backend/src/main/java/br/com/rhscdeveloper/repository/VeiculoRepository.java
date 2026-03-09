@@ -1,6 +1,7 @@
 package br.com.rhscdeveloper.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import br.com.rhscdeveloper.model.VeiculoVO;
 import br.com.rhscdeveloper.util.Constantes;
@@ -10,9 +11,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class VeiculoRepository implements PanacheRepositoryBase<VeiculoVO, Integer> {
-
-	public VeiculoVO findByPlaca(String placa) {
-		return find("placa", placa).firstResult();
+	
+	public Optional<VeiculoVO> findByPlaca(String placa) {
+		return Optional.ofNullable(find("placa", placa).firstResult());
 	}
 	
 	public List<VeiculoVO> findAll(Integer pagina){

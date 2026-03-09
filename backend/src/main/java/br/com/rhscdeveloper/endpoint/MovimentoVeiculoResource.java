@@ -5,7 +5,8 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import br.com.rhscdeveloper.dto.MovVeiculoReqDTO;
+import br.com.rhscdeveloper.dto.MovVeiculoCriarDTO;
+import br.com.rhscdeveloper.dto.MovVeiculoEncerrarDTO;
 import br.com.rhscdeveloper.service.MovimentoVeiculoService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -30,11 +31,11 @@ public class MovimentoVeiculoResource {
 	@Inject
 	private MovimentoVeiculoService service;
 	
-	@Operation(summary = "Cadastrar movimento de veículo", description = "Cadastrar um movimento de veículo")
+	@Operation(summary = "Criar movimento de veículo", description = "Cria um movimento de veículo")
 	@POST
-	@Path("/cadastrar")
-	public Response cadastarMovVeiculo(@RequestBody @Valid MovVeiculoReqDTO dto) {
-		return Response.status(Status.OK).entity(service.criarMovimentoVeiculo(dto)).build();
+	@Path("/criar")
+	public Response cadastarMovVeiculo(@RequestBody @Valid MovVeiculoCriarDTO dto) {
+		return Response.status(Status.CREATED).entity(service.criarMovimentoVeiculo(dto)).build();
 	}
 	
 	@Operation(summary = "Obtém um movimento de veículo", description = "Obtém um movimento de veículo pelo id do movimento")
@@ -51,14 +52,15 @@ public class MovimentoVeiculoResource {
 	}
 
 	@Operation(summary = "Obtém movimentos de veículo", description = "Obtém movimentos de veículo não encerrados")
-	@POST
-	public Response obterMovsVeiculoAberto(@RequestBody @Valid MovVeiculoReqDTO dto) {
-		return Response.status(Status.OK).entity(service.obterMovsVeiculoAberto()).build();
+	@GET
+	@Path("/movimentos")
+	public Response obterMovsVeiculoAberto(@Parameter(description = "Número da página", required = true) @QueryParam(value = "pagina") Integer pagina) {
+		return Response.status(Status.OK).entity(service.obterMovsVeiculoAberto(pagina)).build();
 	}
 
 	@Operation(summary = "Encerrar movimento de veículo", description = "Encerra um movimento de veículo")
 	@PUT
-	public Response encerrarMovVeiculo(@RequestBody @Valid MovVeiculoReqDTO dto) {
+	public Response encerrarMovVeiculo(@RequestBody @Valid MovVeiculoEncerrarDTO dto) {
 		return Response.status(Status.OK).entity(service.encerrarMovVeiculo(dto)).build();
 	}
 }

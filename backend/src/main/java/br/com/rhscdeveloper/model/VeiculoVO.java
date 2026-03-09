@@ -48,29 +48,12 @@ public class VeiculoVO extends BaseVO implements Comparable<VeiculoVO> {
 	public VeiculoVO() {
 		
 	}
-
-	public VeiculoVO(String modelo, String montadora, LocalDate dtRegistro, String placa) {
+	
+	protected VeiculoVO(String modelo, String montadora, String placa) {
 		this.modelo = modelo;
 		this.montadora = montadora;
-		this.dtRegistro = dtRegistro;
+		this.dtRegistro = LocalDate.now();
 		this.placa = placa;
-	}
-
-	public VeiculoVO(Integer id, String modelo, String montadora, LocalDate dtRegistro, String placa) {
-		this.id = id;
-		this.modelo = modelo;
-		this.montadora = montadora;
-		this.dtRegistro = dtRegistro;
-		this.placa = placa;
-	}
-
-	public VeiculoVO(VeiculoVO vo) {
-		this.id = vo.id;
-		this.modelo = vo.modelo;
-		this.montadora = vo.montadora;
-		this.dtRegistro = vo.dtRegistro;
-		this.placa = vo.placa;
-		this.versao = vo.versao;
 	}
 
 	public Integer getId() {
@@ -132,12 +115,22 @@ public class VeiculoVO extends BaseVO implements Comparable<VeiculoVO> {
 
 	@Override
 	public String toString() {
-		return "VeiculoVO [id=" + id + ", modelo=" + modelo + ", montadora=" + montadora + ", dtRegistro=" + dtRegistro
-				+ ", placa=" + placa + ", versao=" + versao + ", movimentos=" + movimentos + "]";
+		return "VeiculoVO [id=" + id + ", modelo=" + modelo + ", montadora=" + montadora + ", dtRegistro=" + 
+				dtRegistro + ", placa=" + placa + ", versao=" + versao + ", movimentos=" + movimentos + "]";
 	}
 
 	@Override
 	public int compareTo(VeiculoVO o) {
 		return this.id < o.getId() ? -1 : 1;
+	}
+	
+	public static VeiculoVO criar(String modelo, String montadora, String placa) {
+		return new VeiculoVO(modelo, montadora, placa);
+	}
+	
+	public void atualizar(String modelo, String montadora, String placa) {
+		if(modelo != null) this.modelo = modelo;
+		if(montadora != null) this.montadora = montadora;
+		if(placa != null) this.placa = placa;
 	}
 }

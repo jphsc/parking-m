@@ -43,13 +43,16 @@ public abstract class Constantes {
 	public static final String MSG_SEM_MONTADORA = "É necessário informar a montadora do veículo";
 	
 	// movimento veiculo
+	public static final String MSG_SEM_ID_VEICULO = "É necessário informar o id do veículo";
 	public static final String MSG_MOV_VEI_ENCERRADO = "Movimento encerrado com sucesso";
 	public static final String MSG_MOV_VEI_NAO_ENCONTRADO = "Movimento de id %d não encontrado";
 	public static final String MSG_MOV_VEI_JA_ENCERRADO = "Movimento de id %d já encerrado";
 	public static final String DT_HR_INI_VALIDADE = "data e hora do início da validade";
 	
 	//regra financeira
-	public static final String MSG_REG_FINAC_SEM_ID = "É necessário informar o id da regra financeira";
-	public static final String MSG_REG_NAO_ENCONTRADA = "Regra de id %d não encontrada";
+	public static final String MSG_REG_FIN_SEM_ID = "É necessário informar o id da regra financeira";
+	public static final String MSG_REG_FIN_SEM_ID_MOV = "É necessário informar o id do movimento";
+	public static final String MSG_REG_FIN_NAO_ENCONTRADA = "Regra de id %d não encontrada";
+	public static final String MSG_REG_FIN_VALOR_OBRIGATORIO = "É necessário informar o valor";
 	
 }

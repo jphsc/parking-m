@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-public class MovimentoVeiculoDTO implements Serializable {
+import br.com.rhscdeveloper.model.BaseIdentificavel;
+
+public class MovVeiculoRespDTO implements BaseIdentificavel, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -18,16 +20,16 @@ public class MovimentoVeiculoDTO implements Serializable {
 	private LocalDateTime dtHrEntrada;
 	private LocalDateTime dtHrSaida;
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	private MovimentoFinanceiroDTO movimentoFinanceiro;
+	private MovFinanceiroRespDTO movimentoFinanceiro;
 	private Integer situacao;
 	private LocalDateTime versao;
     
-    public MovimentoVeiculoDTO() {
+    public MovVeiculoRespDTO() {
     	
     }
 
-	public MovimentoVeiculoDTO(Integer id, Integer idVeiculo, Integer idRegra, String placa, Integer tipoMovimento, LocalDateTime dtHrEntrada, 
-			LocalDateTime dtHrSaida, MovimentoFinanceiroDTO movimentoFinanceiro, Integer situacao, LocalDateTime versao) {
+	public MovVeiculoRespDTO(Integer id, Integer idVeiculo, Integer idRegra, String placa, Integer tipoMovimento, LocalDateTime dtHrEntrada, 
+			LocalDateTime dtHrSaida, MovFinanceiroRespDTO movimentoFinanceiro, Integer situacao, LocalDateTime versao) {
 		this.idMovimento = id;
 		this.idVeiculo = idVeiculo;
 		this.idRegra = idRegra;
@@ -96,11 +98,11 @@ public class MovimentoVeiculoDTO implements Serializable {
 		this.dtHrSaida = dtHrSaida;
 	}
     
-	public MovimentoFinanceiroDTO getMovimentoFinanceiro() {
+	public MovFinanceiroRespDTO getMovimentoFinanceiro() {
 		return movimentoFinanceiro;
 	}
 
-	public void setMovimentoFinanceiro(MovimentoFinanceiroDTO movimentoFinanceiro) {
+	public void setMovimentoFinanceiro(MovFinanceiroRespDTO movimentoFinanceiro) {
 		this.movimentoFinanceiro = movimentoFinanceiro;
 	}
 

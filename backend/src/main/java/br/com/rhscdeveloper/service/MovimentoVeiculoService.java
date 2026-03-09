@@ -10,16 +10,15 @@ import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
 
-import br.com.rhscdeveloper.dto.MovVeiculoReqDTO;
-import br.com.rhscdeveloper.dto.MovimentoVeiculoDTO;
+import br.com.rhscdeveloper.dto.MovVeiculoCriarDTO;
+import br.com.rhscdeveloper.dto.MovVeiculoEncerrarDTO;
+import br.com.rhscdeveloper.dto.MovVeiculoRespDTO;
 import br.com.rhscdeveloper.dto.RespostaDTO;
 import br.com.rhscdeveloper.enumerator.Enums;
 import br.com.rhscdeveloper.enumerator.Enums.SituacaoMovimento;
 import br.com.rhscdeveloper.enumerator.Enums.TipoMovimento;
-import br.com.rhscdeveloper.enumerator.Enums.TipoOperacao;
 import br.com.rhscdeveloper.exception.GlobalException;
 import br.com.rhscdeveloper.mapper.MovimentoVeiculoMapper;
-import br.com.rhscdeveloper.model.BaseVO;
 import br.com.rhscdeveloper.model.MovimentoFinanceiroVO;
 import br.com.rhscdeveloper.model.MovimentoFinanceiroVOId;
 import br.com.rhscdeveloper.model.MovimentoVeiculoVO;
@@ -33,7 +32,6 @@ import br.com.rhscdeveloper.util.Constantes;
 import br.com.rhscdeveloper.util.Utils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
@@ -48,75 +46,68 @@ public class MovimentoVeiculoService {
 	private static final Logger LOG = Logger.getLogger(GlobalException.class);
 	
 	@Transactional
-	public RespostaDTO<MovimentoVeiculoDTO> criarMovimentoVeiculo(MovVeiculoReqDTO filtro) {
-		
-		this.validarMovimentoOperacao(filtro, TipoOperacao.CADASTRAR);
+	public RespostaDTO<MovVeiculoRespDTO> criarMovimentoVeiculo(MovVeiculoCriarDTO req) {
 		
 		//Thread.sleep(4000);	
-		VeiculoVO veiculo = vRepository.findByIdOptional(filtro.idVeiculo())
-				.orElseThrow(() -> new GlobalException(Constantes.COD_ERRO_INEXISTENTE, String.format(Constantes.MSG_ERRO_VEICULO_NAO_ENCONTRADO, filtro.idVeiculo())));
+		VeiculoVO veiculo = vRepository.findByIdOptional(req.idVeiculo())
+				.orElseThrow(() -> new GlobalException(Constantes.COD_ERRO_INEXISTENTE, String.format(Constantes.MSG_ERRO_VEICULO_NAO_ENCONTRADO, req.idVeiculo())));
 		
-		MovimentoVeiculoVO movVeiculo = new MovimentoVeiculoVO.Builder()
-				.setVeiculoVO(veiculo)
-				.setTipoMovimento(filtro.tipoMovimento())
-				.setDtHrEntrada(filtro.dtHrEntrada())
-				.setSituacao(SituacaoMovimento.ABERTO.getId()).build();
+		MovimentoVeiculoVO movVeiculo = 
+				MovimentoVeiculoVO.criar(veiculo, req.tipoMovimento(), req.dtHrEntrada(), null, SituacaoMovimento.ABERTO.getId());
 		
-		if(filtro.tipoMovimento() == TipoMovimento.FINAL_SEMANA.getId() || filtro.tipoMovimento() == TipoMovimento.MENSALISTA.getId()) {
-			Objects.requireNonNull(filtro.idRegra(), Constantes.MSG_REG_FINAC_SEM_ID);
+		if(req.tipoMovimento() == TipoMovimento.FINAL_SEMANA.getId() || req.tipoMovimento() == TipoMovimento.MENSALISTA.getId()) {
+			Objects.requireNonNull(req.idRegra(), Constantes.MSG_REG_FIN_SEM_ID);
 			
 			RegraFinanceiraVO regraFinanceira = rfRepository
-					.findByIdOptional(filtro.idRegra()).orElseThrow(() -> new GlobalException(Constantes.COD_ERRO_INEXISTENTE, String.format(Constantes.MSG_REG_NAO_ENCONTRADA, filtro.idRegra())));
+					.findByIdOptional(req.idRegra()).orElseThrow(() -> new GlobalException(Constantes.COD_ERRO_INEXISTENTE, String.format(Constantes.MSG_REG_FIN_NAO_ENCONTRADA, req.idRegra())));
 			
-			Double valor = this.gerarValorMovimento(movVeiculo, regraFinanceira, filtro.dtHrEntrada());
-			
+			Double valor = this.gerarValorMovimento(movVeiculo, regraFinanceira, req.dtHrEntrada());
 			new MovimentoFinanceiroVO(regraFinanceira, movVeiculo, valor, SituacaoMovimento.ABERTO.getId());
 		}
 		
-		movVeiculo = this.salvarESincronizar(movVeiculo);
-		MovimentoVeiculoDTO dto = mvMapper.toDto(movVeiculo);
+		mvRepository.persist(movVeiculo);
+		MovVeiculoRespDTO resp = mvMapper.toDto(movVeiculo);
 		
-		return RespostaDTO.of(dto, null, Constantes.MSG_REGISTRO_CADASTRADO);
+		return RespostaDTO.of(resp, null, Constantes.MSG_REGISTRO_CADASTRADO);
 	}
 
-	public RespostaDTO<MovimentoVeiculoDTO> obterMovVeiculoById(Integer id) {
+	public RespostaDTO<MovVeiculoRespDTO> obterMovVeiculoById(Integer id) {
 		
 		MovimentoVeiculoVO vo = mvRepository.findByIdOptional(id)
 				.orElseThrow(() -> new GlobalException(Constantes.COD_ERRO_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS));
-		MovimentoVeiculoDTO dto = mvMapper.toDto(vo);
+		MovVeiculoRespDTO dto = mvMapper.toDto(vo);
 		
 		return RespostaDTO.of(dto, null, Constantes.MSG_REGISTROS_ENCONTRADOS);
 	}
 	
-	public RespostaDTO<MovimentoVeiculoDTO> obterMovsVeiculo(Integer pagina) {
+	public RespostaDTO<MovVeiculoRespDTO> obterMovsVeiculo(Integer pagina) {
 		
 		//Thread.sleep(4000);
 		Integer nroPagina = Utils.getNroPaginaConsulta(pagina);
 		List<MovimentoVeiculoVO> movsVeiculo = mvRepository.findMovsPaginado(nroPagina);
-		List<MovimentoVeiculoDTO> resposta = movsVeiculo.stream().map(mvMapper::toDto).collect(Collectors.toList());
+		List<MovVeiculoRespDTO> resposta = movsVeiculo.stream().map(mvMapper::toDto).collect(Collectors.toList());
 		String mensagem = Utils.getMensagemBuscaRegistro(movsVeiculo);
 		
 		return RespostaDTO.of(resposta, nroPagina, mensagem);
 	}
 	
-	public RespostaDTO<MovimentoVeiculoDTO> obterMovsVeiculoAberto() {
+	public RespostaDTO<MovVeiculoRespDTO> obterMovsVeiculoAberto(Integer pagina) {
 		
 		//Thread.sleep(4000);
-		List<MovimentoVeiculoVO> movsVeiculo = mvRepository.findMovsAbertos();
-		List<MovimentoVeiculoDTO> resposta = movsVeiculo.stream().map(mvMapper::toDto).collect(Collectors.toList());
+		Integer nroPagina = Utils.getNroPaginaConsulta(pagina);
+		List<MovVeiculoRespDTO> movsVeiculo = mvRepository.findMovsAbertos(nroPagina)
+				.stream().map(mvMapper::toDto).collect(Collectors.toList());
 		String mensagem = Utils.getMensagemBuscaRegistro(movsVeiculo);
 		
-		return RespostaDTO.of(resposta, null, mensagem);
+		return RespostaDTO.of(movsVeiculo, nroPagina, mensagem);
 	}
 	
 	@Transactional
-	public RespostaDTO<MovimentoVeiculoDTO> encerrarMovVeiculo(MovVeiculoReqDTO filtro) {
+	public RespostaDTO<MovVeiculoRespDTO> encerrarMovVeiculo(MovVeiculoEncerrarDTO req) {
 		
-		//Thread.sleep(4000);	
-		this.validarMovimentoOperacao(filtro, TipoOperacao.EDITAR);
-		
-		MovimentoVeiculoVO mvv = mvRepository.findByIdOptional(filtro.idMovimento())
-				.orElseThrow(() -> new GlobalException(Constantes.COD_ERRO_INEXISTENTE, String.format(Constantes.MSG_MOV_VEI_NAO_ENCONTRADO, filtro.idMovimento())));
+		//Thread.sleep(4000);		
+		MovimentoVeiculoVO mvv = mvRepository.findByIdOptional(req.idMovimento())
+				.orElseThrow(() -> new GlobalException(Constantes.COD_ERRO_INEXISTENTE, String.format(Constantes.MSG_MOV_VEI_NAO_ENCONTRADO, req.idMovimento())));
 		
 		if(mvv.getSituacao().equals(SituacaoMovimento.ENCERRADO.getId())) {
 			throw new GlobalException(Constantes.COD_ERRO_VALIDACAO_REGISTRO, String.format(Constantes.MSG_MOV_VEI_JA_ENCERRADO, mvv.getId()));
@@ -127,10 +118,10 @@ public class MovimentoVeiculoService {
 		if(nonNull(mvv.getMovFinanceiro())) {
 			regra = mvv.getMovFinanceiro().getRegra();
 		} else {
-			Objects.requireNonNull(filtro.idRegra(), "É necessário informar um id de regra financeira válido");
+			Objects.requireNonNull(req.idRegra(), Constantes.MSG_REG_FIN_SEM_ID);
 			
-			regra = rfRepository.findByIdOptional(filtro.idRegra())
-					.orElseThrow(() -> new GlobalException(Constantes.COD_ERRO_INEXISTENTE, String.format(Constantes.MSG_REG_NAO_ENCONTRADA, filtro.idRegra())));
+			regra = rfRepository.findByIdOptional(req.idRegra())
+					.orElseThrow(() -> new GlobalException(Constantes.COD_ERRO_INEXISTENTE, String.format(Constantes.MSG_REG_FIN_NAO_ENCONTRADA, req.idRegra())));
 		}
 		
 		Double valor = gerarValorMovimento(mvv, regra, mvv.getDtHrEntrada());
@@ -145,13 +136,10 @@ public class MovimentoVeiculoService {
 
 		
 		mvv.setSituacao(SituacaoMovimento.ENCERRADO.getId());
-		mvv.setDtHrSaida(filtro.dtHrSaida());
-
-		salvarESincronizar(mvv); 
+		mvv.setDtHrSaida(req.dtHrSaida());
 		
-		MovimentoVeiculoDTO dto = mvMapper.toDto(mvv);
-		
-		return RespostaDTO.of(dto, null, Constantes.MSG_MOV_VEI_ENCERRADO);
+		MovVeiculoRespDTO resp = mvMapper.toDto(mvv);
+		return RespostaDTO.of(resp, null, Constantes.MSG_MOV_VEI_ENCERRADO);
 	}
 	
 	/**
@@ -193,35 +181,4 @@ public class MovimentoVeiculoService {
 		}
 	}
 	
-	@Transactional
-	protected <T extends BaseVO> T salvarESincronizar(T entity) {
-		
-		EntityManager em = mvRepository.getEntityManager();
-		T resultado;
-		
-		if(Objects.nonNull(entity)) {
-			em.persist(entity);
-			resultado = entity;
-		} else {
-			resultado = em.merge(entity);
-		}
-		
-		em.flush();
-		em.refresh(resultado);
-		
-		return resultado;
-	}
-	
-	private void validarMovimentoOperacao(MovVeiculoReqDTO dto, TipoOperacao op) {
-		
-		if(op.equals(TipoOperacao.CADASTRAR)) {
-			Objects.requireNonNull(dto.idVeiculo(), "É necessário informar um id de veículo válido");
-			Objects.requireNonNull(dto.tipoMovimento(), "É necessário informar um tipo de movimento válido");
-			Objects.requireNonNull(dto.dtHrEntrada(), "É necessário informar a data e hora de entrada, no formato yyyy-MM-ddTHH:mm");
-			
-		} else if(op.equals(TipoOperacao.EDITAR)) {
-			Objects.requireNonNull(dto.idMovimento(), "É necessário informar o id do movimento");
-			Objects.requireNonNull(dto.dtHrSaida(), "É necessário informar a data e hora da saída, no formato yyyy-MM-ddTHH:mm");
-		}
-	}
 }

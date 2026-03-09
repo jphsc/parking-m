@@ -1,7 +1,5 @@
 package br.com.rhscdeveloper.exception;
 
-import java.util.stream.Collectors;
-
 import org.jboss.logging.Logger;
 
 import br.com.rhscdeveloper.dto.ErroDTO;
@@ -21,11 +19,15 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
 	
 	@Override
     public Response toResponse(ConstraintViolationException exception) {
-        LOG.error("Erro de validação: ", exception);
+        LOG.info("Erro de validação: ", exception);
         
-        String mensagem = exception.getConstraintViolations().stream()
+        System.out.println(exception.getConstraintViolations());
+        
+        String mensagem = exception.getConstraintViolations()
+        		.stream()
+        		.findFirst()
         		.map(violation -> String.format("%s: %s", getFieldName(violation.getPropertyPath().toString()), violation.getMessage()))
-        		.collect(Collectors.joining("; "));
+        		.orElse(Constantes.MSG_ERRO_GENERICO);
         
         ErroDTO erroDTO = new ErroDTO(Constantes.COD_ERRO_VALIDACAO_REGISTRO, mensagem);
         
