@@ -1,5 +1,6 @@
 package br.com.rhscdeveloper.configuration;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -7,19 +8,19 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.exception.FlywayValidateException;
 
-import br.com.rhscdeveloper.enumerator.Enums.Situacao;
-import br.com.rhscdeveloper.enumerator.Enums.SituacaoMovimento;
-import br.com.rhscdeveloper.enumerator.Enums.TipoCobranca;
-import br.com.rhscdeveloper.enumerator.Enums.TipoMovimento;
-import br.com.rhscdeveloper.exception.GlobalException;
-import br.com.rhscdeveloper.model.MovimentoFinanceiroVO;
-import br.com.rhscdeveloper.model.MovimentoVeiculoVO;
-import br.com.rhscdeveloper.model.RegraFinanceiraVO;
-import br.com.rhscdeveloper.model.VeiculoVO;
-import br.com.rhscdeveloper.repository.MovimentoFinanceiroRepository;
-import br.com.rhscdeveloper.repository.MovimentoVeiculoRepository;
-import br.com.rhscdeveloper.repository.RegraFinanceiraRepository;
-import br.com.rhscdeveloper.repository.VeiculoRepository;
+import br.com.rhscdev.domain.entity.MovimentoFinanceiroVO;
+import br.com.rhscdev.domain.entity.MovimentoVeiculoVO;
+import br.com.rhscdev.domain.entity.RegraFinanceiraVO;
+import br.com.rhscdev.domain.entity.VeiculoVO;
+import br.com.rhscdev.domain.enumerator.Enums.Situacao;
+import br.com.rhscdev.domain.enumerator.Enums.SituacaoMovimento;
+import br.com.rhscdev.domain.enumerator.Enums.TipoCobranca;
+import br.com.rhscdev.domain.enumerator.Enums.TipoMovimento;
+import br.com.rhscdev.infrastructure.persistence.MovFinanceiroPanacheRepository;
+import br.com.rhscdev.infrastructure.persistence.MovVeiculoPanacheRepository;
+import br.com.rhscdev.infrastructure.persistence.RegraFinancPanacheRepository;
+import br.com.rhscdev.infrastructure.persistence.VeiculoPanacheRepository;
+import br.com.rhscdev.interfaces.rest.handler.GlobalException;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -35,13 +36,13 @@ public class InitDataOnDataBase {
 	@ConfigProperty(name = "quarkus.datasource.username") private String user;
 	@ConfigProperty(name = "quarkus.datasource.password") private String password;
 
-	@Inject VeiculoRepository vRepository;
-	@Inject RegraFinanceiraRepository rfRepository;
-	@Inject MovimentoVeiculoRepository mvRepository;
-	@Inject MovimentoFinanceiroRepository mfRepository;
+	@Inject VeiculoPanacheRepository vRepository;
+	@Inject RegraFinancPanacheRepository rfRepository;
+	@Inject MovVeiculoPanacheRepository mvRepository;
+	@Inject MovFinanceiroPanacheRepository mfRepository;
 	
 	public void onStart(@Observes StartupEvent ev) {
-		init();
+//		init();
     }
 		
 	public void applyMigrations() {
@@ -71,13 +72,13 @@ public class InitDataOnDataBase {
 			
 			if(rfRepository.findAll().list().isEmpty()) {
 
-				rfRepository.persist(RegraFinanceiraVO.criar("HORA SEMANAL", 35.00, TipoCobranca.INDIFERENTE.getId(), TipoMovimento.DIA.getId(), LocalDate.now().minusDays(5), LocalDate.now(), Situacao.ATIVO.getId()));
-				rfRepository.persist(RegraFinanceiraVO.criar("HORA SEMANAL DESAT", 8.00, TipoCobranca.CREDITO.getId(), TipoMovimento.HORA.getId(), LocalDate.now().minusDays(5), LocalDate.now().minusDays(2), Situacao.INATIVO.getId()));
-				rfRepository.persist(RegraFinanceiraVO.criar("HORA FINAL DE SEMANA", 7.00, TipoCobranca.INDIFERENTE.getId(), TipoMovimento.FINAL_SEMANA.getId(), LocalDate.now().minusMonths(2), null, Situacao.ATIVO.getId()));
-				rfRepository.persist(RegraFinanceiraVO.criar("MENSALISTA EM DINHEIRO", 250.50, TipoCobranca.DINHEIRO.getId(), TipoMovimento.MENSALISTA.getId(), LocalDate.now().minusDays(34), LocalDate.now(), Situacao.ATIVO.getId()));
-				rfRepository.persist(RegraFinanceiraVO.criar("MENSALISTA CARTÃO", 270.79, TipoCobranca.CREDITO.getId(), TipoMovimento.MENSALISTA.getId(), LocalDate.now().minusWeeks(4), LocalDate.now(), Situacao.ATIVO.getId()));
-				rfRepository.persist(RegraFinanceiraVO.criar("FRAÇÃO HORA UTIL INDIFERENTE", 5.50, TipoCobranca.INDIFERENTE.getId(), TipoMovimento.DIA.getId(), LocalDate.now().minusYears(1), LocalDate.now(), Situacao.ATIVO.getId()));
-				rfRepository.persist(RegraFinanceiraVO.criar("FRAÇÃO HORA FINAL DE SEMANA INDIFERENTE", 4.00, TipoCobranca.INDIFERENTE.getId(), TipoMovimento.FINAL_SEMANA.getId(), LocalDate.now().minusDays(2), LocalDate.now(), Situacao.ATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("HORA SEMANAL", new BigDecimal(35.00), TipoCobranca.INDIFERENTE.getId(), TipoMovimento.DIA.getId(), LocalDate.now().minusDays(5), LocalDate.now(), Situacao.ATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("HORA SEMANAL DESAT", new BigDecimal(8.00), TipoCobranca.CREDITO.getId(), TipoMovimento.HORA.getId(), LocalDate.now().minusDays(5), LocalDate.now().minusDays(2), Situacao.INATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("HORA FINAL DE SEMANA", new BigDecimal(7.00), TipoCobranca.INDIFERENTE.getId(), TipoMovimento.FINAL_SEMANA.getId(), LocalDate.now().minusMonths(2), null, Situacao.ATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("MENSALISTA EM DINHEIRO", new BigDecimal(250.50), TipoCobranca.DINHEIRO.getId(), TipoMovimento.MENSALISTA.getId(), LocalDate.now().minusDays(34), LocalDate.now(), Situacao.ATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("MENSALISTA CARTÃO", new BigDecimal(270.79), TipoCobranca.CREDITO.getId(), TipoMovimento.MENSALISTA.getId(), LocalDate.now().minusWeeks(4), LocalDate.now(),	Situacao.ATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("FRAÇÃO HORA UTIL INDIFERENTE", new BigDecimal(5.50), TipoCobranca.INDIFERENTE.getId(), TipoMovimento.DIA.getId(), LocalDate.now().minusYears(1), LocalDate.now(),	Situacao.ATIVO.getId()));
+				rfRepository.persist(RegraFinanceiraVO.criar("FRAÇÃO HORA FINAL DE SEMANA INDIFERENTE", new BigDecimal(4.00), TipoCobranca.INDIFERENTE.getId(), TipoMovimento.FINAL_SEMANA.getId(), LocalDate.now().minusDays(2), LocalDate.now(), Situacao.ATIVO.getId()));
 			}
 			
 			if(mvRepository.findAll().list().isEmpty()) {
@@ -87,7 +88,7 @@ public class InitDataOnDataBase {
 			if(mfRepository.findAll().list().isEmpty()) {
 				RegraFinanceiraVO rf = rfRepository.findAll().firstResult();
 				MovimentoVeiculoVO mv = mvRepository.findAll().firstResult();
-				mfRepository.persist(new MovimentoFinanceiroVO(rf, mv, 2.00, SituacaoMovimento.ENCERRADO.getId()));
+				mfRepository.persist(MovimentoFinanceiroVO.criar(rf, mv, SituacaoMovimento.ENCERRADO.getId()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

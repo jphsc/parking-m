@@ -91,6 +91,13 @@
         <artifactId>mapstruct</artifactId>
         <version>${org.mapstruct.version}</version>
     </dependency>
+	
+	<dependency>
+        <groupId>org.mapstruct</groupId>
+        <artifactId>mapstruct-processor</artifactId>
+        <version>${org.mapstruct.version}</version>
+        <scope>provided</scope>
+    </dependency>
     <dependency>
 	    <groupId>io.quarkus</groupId>
 	    <artifactId>quarkus-hibernate-validator</artifactId>
@@ -126,6 +133,7 @@
                     </path>
                 </annotationProcessorPaths>
                 <compilerArgs>
+					<!--<arg>-proc:full</arg>  incluido esse-->
                     <arg>-Amapstruct.defaultComponentModel=cdi</arg>
                 </compilerArgs>
             </configuration>

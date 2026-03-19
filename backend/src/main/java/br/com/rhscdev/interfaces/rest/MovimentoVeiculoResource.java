@@ -1,0 +1,72 @@
+package br.com.rhscdev.interfaces.rest;
+
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+
+import br.com.rhscdev.application.dto.request.MovimentoVeiculoCriar;
+import br.com.rhscdev.application.dto.request.MovimentoVeiculoEncerrar;
+import br.com.rhscdev.application.service.MovimentoVeiculoService;
+import br.com.rhscdev.infrastructure.config.Constantes;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+
+@Tag(name = "Movimentos de veículo")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@Path("/movimentos-veiculo")
+public class MovimentoVeiculoResource {
+
+	@Inject
+	private MovimentoVeiculoService service;
+	
+	@Operation(summary = "Criar movimento de veículo", description = "Cria um movimento de veículo")
+	@POST
+	@Path("/criar")
+	public Response cadastarMovVeiculo(@RequestBody @Valid MovimentoVeiculoCriar dto) {
+		return Response.status(Status.CREATED).entity(service.criarMovimentoVeiculo(dto)).build();
+	}
+	
+	@Operation(summary = "Obtém um movimento de veículo", description = "Obtém um movimento de veículo pelo id do movimento")
+	@GET
+	@Path("/{id}")
+	public Response obterMovVeiculo(@PathParam("id") Integer id) {
+		return Response.status(Status.OK).entity(service.obterMovVeiculoById(id)).build();
+	}
+
+	@Operation(summary = "Obtém movimento de veículo", description = "Obtém movimentos de veículo")
+	@GET
+	public Response obterMovVeiculos(
+			@Parameter(description = "Número da página", required = true) 
+			@NotNull(message = Constantes.MSG_PAGINA_OBRIGATORIO) @QueryParam(value = "pagina") Integer pagina) {
+		return Response.status(Status.OK).entity(service.obterMovsVeiculo(pagina)).build();
+	}
+
+	@Operation(summary = "Obtém movimentos de veículo", description = "Obtém movimentos de veículo não encerrados")
+	@GET
+	@Path("/movimentos")
+	public Response obterMovsVeiculoAberto(
+			@Parameter(description = "Número da página", required = true) 
+			@NotNull(message = Constantes.MSG_PAGINA_OBRIGATORIO) @QueryParam(value = "pagina") Integer pagina) {
+		return Response.status(Status.OK).entity(service.obterMovsVeiculoAberto(pagina)).build();
+	}
+
+	@Operation(summary = "Encerrar movimento de veículo", description = "Encerra um movimento de veículo")
+	@PUT
+	public Response encerrarMovVeiculo(@RequestBody @Valid MovimentoVeiculoEncerrar dto) {
+		return Response.status(Status.OK).entity(service.encerrarMovVeiculo(dto)).build();
+	}
+}
