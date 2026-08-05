@@ -1,4 +1,4 @@
-package br.com.rhscdeveloper;
+package br.com.rhscdev;
 
 import java.io.IOException;
 import java.util.TimeZone;
