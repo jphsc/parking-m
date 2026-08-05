@@ -24,7 +24,7 @@ export abstract class Enumeradores {
         for(const key in enumerador) {
           if(enumerador.hasOwnProperty(key)) {
             if(enumerador[key].id === id) {
-              desc = enumerador[key].descricao;
+              desc = enumerador[key].descricao.toUpperCase();
             }
           }
         }
@@ -45,10 +45,10 @@ export abstract class Enumeradores {
   };
 
   public static readonly TipoCobranca: Enumerador = {
-    DINHIEIRO: { id: 5, descricao: 'Dinheiro' },
-    DEBITO: { id: 6, descricao: 'Débito' },
-    CREDITO: { id: 7, descricao: 'Crédito' },
-    INDIFERENTE: { id: 8, descricao: 'Indiferente' }
+    DINHEIRO: { id: 4, descricao: 'Dinheiro' },
+    DEBITO: { id: 5, descricao: 'Débito' },
+    CREDITO: { id: 6, descricao: 'Crédito' },
+    INDIFERENTE: { id: 7, descricao: 'Indiferente' }
   };
 
   public static readonly TipoMovVeiculo: Enumerador = {

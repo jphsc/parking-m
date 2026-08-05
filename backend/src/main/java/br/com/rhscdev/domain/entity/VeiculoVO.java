@@ -7,6 +7,8 @@ import java.util.Objects;
 
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,7 +52,7 @@ public class VeiculoVO extends BaseVO implements Comparable<VeiculoVO> {
 		
 	}
 	
-	protected VeiculoVO(String modelo, String montadora, String placa) {
+	private VeiculoVO(String modelo, String montadora, String placa) {
 		this.modelo = modelo;
 		this.montadora = montadora;
 		this.dtRegistro = LocalDate.now();
@@ -95,6 +97,11 @@ public class VeiculoVO extends BaseVO implements Comparable<VeiculoVO> {
 
 	public void setPlaca(String placa) {
 		this.placa = placa;
+	}
+	
+	@JsonIgnore
+	public List<MovimentoVeiculoVO> movimentos(){
+		return this.movimentos;
 	}
 
 	@Override

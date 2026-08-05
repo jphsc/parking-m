@@ -23,7 +23,7 @@ public class RespostaPaginada<T> {
 		RespostaPaginada<T> resposta = new RespostaPaginada<T>();
 		resposta.setMensagem(mensagem);
 		resposta.setRegistros(validarRegsDto(dto));
-		resposta.setPagina(Utils.getNroPaginaResp(pagina));
+		resposta.setPagina(Utils.getNroPaginaResposta(pagina));
 		resposta.setQuantidade(isNull(dto) ? 0 : 1);
 		return resposta;
 	}
@@ -33,8 +33,25 @@ public class RespostaPaginada<T> {
 		RespostaPaginada<T> resposta = new RespostaPaginada<T>();
 		resposta.setMensagem(mensagem);
 		resposta.setRegistros(dto);
-		resposta.setPagina(Utils.getNroPaginaResp(pagina));
+		resposta.setPagina(Utils.getNroPaginaResposta(pagina));
 		resposta.setQuantidade(isNull(dto) ? 0 : dto.size());
+		return resposta;
+	}
+	
+//	public static <T> RespostaPaginada<T> of(List<T> dto, Integer pagina, String mensagem, Integer quantidade) {
+//		
+//		RespostaPaginada<T> resposta = new RespostaPaginada<T>();
+//		resposta.setMensagem(mensagem);
+//		resposta.setRegistros(dto);
+//		resposta.setPagina(Utils.getNroPaginaResp(pagina));
+//		resposta.setQuantidade(quantidade);
+//		return resposta;
+//	}
+	
+	public static <T> RespostaPaginada<T> of(List<T> dto, Integer pagina, String mensagem, Long qtdRegistros) {
+		
+		RespostaPaginada<T> resposta = RespostaPaginada.of(dto, pagina, mensagem);
+		resposta.setQuantidade(qtdRegistros.intValue());
 		return resposta;
 	}
 	

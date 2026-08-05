@@ -30,4 +30,8 @@
   <ng-template #semRegras>
     <p>Não há regras financeiras cadastradas.</p>
   </ng-template>
+
+  <div class="paginacao" *ngIf="paginar && isLoaded">
+    <app-paginacao [qtdPaginas]="qtdPaginas" [paginaAtual]="paginaAtual" (paginar)="paginarRegistros($event)"></app-paginacao>
+  </div>
 </div>

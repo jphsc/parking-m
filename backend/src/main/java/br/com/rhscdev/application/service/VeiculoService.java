@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.google.gson.Gson;
 
 import br.com.rhscdev.application.dto.request.VeiculoRequest;
+import br.com.rhscdev.application.dto.response.DataQueryResult;
 import br.com.rhscdev.application.dto.response.RespostaPaginada;
 import br.com.rhscdev.application.dto.response.VeiculoResponse;
 import br.com.rhscdev.application.mapper.VeiculoMapper;
@@ -21,8 +22,8 @@ import jakarta.transaction.Transactional;
 @ApplicationScoped
 public class VeiculoService {
 
-	private VeiculoPanacheRepository repository;
 	private VeiculoMapper mapper;
+	private VeiculoPanacheRepository repository;
 	
 	public VeiculoService(VeiculoPanacheRepository repository, VeiculoMapper mapper) {
 		this.repository = repository;
@@ -37,25 +38,34 @@ public class VeiculoService {
 		
 		return RespostaPaginada.of(dto, null, Constantes.MSG_REGISTROS_ENCONTRADOS);
 	}
+	
+	public RespostaPaginada<VeiculoResponse> obterVeiculo(String placa){
+		VeiculoVO vo = this.repository.findByPlaca(placa)
+				.orElseThrow(() -> new GlobalException(Constantes.COD_INEXISTENTE, Constantes.MSG_REGISTROS_NAO_ENCONTRADOS));
+		VeiculoResponse dto = mapper.toResponse(vo);
+		
+		return RespostaPaginada.of(dto, null, Constantes.MSG_REGISTROS_ENCONTRADOS);
+	}
 
 	public RespostaPaginada<VeiculoResponse> obterVeiculos(Integer pagina) {
 
 		Integer nroPagina = Utils.getNroPaginaConsulta(pagina);
-		List<VeiculoResponse> dto = repository.findAll(nroPagina).stream()
-				.map(mapper::toResponse)
-				.collect(Collectors.toList());
-		String mensagem = Utils.getMensagemBuscaRegistro(dto);
+		DataQueryResult<VeiculoVO> res = repository.findAll(nroPagina);
+		List<VeiculoResponse> registros = res.registros().stream().map(mapper::toResponse).collect(Collectors.toList());
+		String mensagem = Utils.getMensagemBuscaRegistro(registros);
 		
-		return RespostaPaginada.of(dto, nroPagina, mensagem);
+		return RespostaPaginada.of(registros, nroPagina, mensagem, res.quantidade());
 	}
 
 	@Transactional
 	public RespostaPaginada<VeiculoResponse> cadastrarVeiculo(VeiculoRequest filtro) {
 		
+		VeiculoVO vo = new VeiculoVO();
+		
 		repository.findByPlaca(filtro.placa())
-				.ifPresent(v -> { throw new ValidacaoConstraintException(Constantes.MSG_ERRO_PLACA_EXISTE); });
+			.ifPresent(v -> { throw new ValidacaoConstraintException(Constantes.MSG_ERRO_PLACA_EXISTE); });
 
-		VeiculoVO vo = VeiculoVO.criar(filtro.modelo(), filtro.montadora(), filtro.placa());
+		vo = VeiculoVO.criar(filtro.modelo(), filtro.montadora(), filtro.placa());
 		vo = repository.save(vo);
 		VeiculoResponse dto = mapper.toResponse(vo);
 		

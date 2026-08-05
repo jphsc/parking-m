@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { Observable } from 'rxjs';
+import { Erro } from 'src/app/models/erro.model';
+import { RespostaReqBackend } from 'src/app/models/resposta.model';
 import { Veiculo } from 'src/app/models/veiculo.model';
 import { LoadingService } from 'src/app/services/loading.service';
 import { ToastService } from 'src/app/services/toast.service';
@@ -20,11 +22,11 @@ export class VeiculoFormComponent implements OnInit {
   protected veiculo: Veiculo = {} as Veiculo;
   protected isLoading$: Observable<boolean>;
   protected loadingMessage$: Observable<string>;
-  protected isLoaded:boolean = false;
+  protected isLoaded: boolean = Utils.FALSO;
 
   protected formVeiculo = this.fb.group({
     id: new FormControl<number | null>(null),
-    montadora: new FormControl<string | null>('GM', [Validators.required, Validators.minLength(3)]),
+    montadora: new FormControl<string | null>('GM', [Validators.required, Validators.minLength(2)]),
     modelo: new FormControl<string>('Onix', [Validators.required, Validators.minLength(3)]),
     placa: new FormControl<string>('ECR5B01', [Validators.required, Validators.minLength(7)]),
     dtRegistro: new FormControl<string | null>(null),
@@ -40,36 +42,37 @@ export class VeiculoFormComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.acao = this.rotaAct.snapshot.url[0].path === 'cadastrar' ? Acao.CADASTRAR : Acao.EDITAR;
+    let url: UrlSegment[] = this.rotaAct.snapshot.url;
+    this.acao = url[0].path.toLowerCase() === 'cadastrar' ? Acao.CADASTRAR : Acao.EDITAR;
 
     if(this.acao === Acao.EDITAR) {
-      let idVeiculo = Number(this.rotaAct.snapshot.url[1].path);
+      let idVeiculo = Number(url[1].path);
       this.getVeiculoById(idVeiculo);
     } else {
-      this.isLoaded = true;
+      this.isLoaded = Utils.VERDADEIRO;
     }
 
-    this.formVeiculo.get("placa")?.valueChanges
-    .subscribe(placa => {
+    this.formVeiculo.get("placa")?.valueChanges.subscribe(placa => {
       if(!placa) return;
 
-      this.formVeiculo.get("placa")?.setValue(Utils.formatarPlaca(placa), { emitEvent: false });
+      this.formVeiculo.get("placa")?.setValue(Utils.formatarPlaca(placa), { emitEvent: Utils.FALSO });
     });
 
     this.formVeiculo.get("modelo")?.valueChanges.subscribe(modelo => {
       if(!modelo) return;
 
-      this.formVeiculo.get("modelo")?.setValue(Utils.uppercaseOnly(modelo), {emitEvent: false})
+      this.formVeiculo.get("modelo")?.setValue(Utils.uppercaseOnly(modelo), {emitEvent: Utils.FALSO})
     });
 
     this.formVeiculo.get("montadora")?.valueChanges.subscribe(montadora => {
       if(!montadora) return;
 
-      this.formVeiculo.get("montadora")?.setValue(Utils.uppercaseOnly(montadora), {emitEvent: false})
+      this.formVeiculo.get("montadora")?.setValue(Utils.uppercaseOnly(montadora), {emitEvent: Utils.FALSO})
     });
   }
 
   acaoVeiculo(): void {
+    this.isLoaded = Utils.FALSO;
     if(this.acao === Acao.CADASTRAR) {
       this.criarVeiculo();
     } else {
@@ -87,21 +90,22 @@ export class VeiculoFormComponent implements OnInit {
     };
 
     this.vs.createVeiculo(veiculo).subscribe({
-      next: (resp) => {
-        this.ts.gerarToast(`Veículo criado com a placa: ${resp.registros[0].placa}`, true);
+      next: (resp: RespostaReqBackend<Veiculo>) => {
+        this.ts.gerarToast(Utils.SUCESSO_CRIAR_VEICULO + resp.registros[0].placa, Utils.VERDADEIRO);
         this.formVeiculo.reset();
-      },
-      error: (err) => {
+        this.isLoaded = Utils.VERDADEIRO;
+      }
+      , error: (err: any) => {
+        let mensagem = Utils.getMensagemErro(err, Utils.ERRO_GERAL_PADRAO);
         console.error(err.error.mensagem);
-        this.ts.gerarToast(err.error.mensagem, false);
-      }, complete: () => {
-        this.isLoaded = true;
+        this.ts.gerarToast(mensagem, Utils.FALSO);
+        this.isLoaded = Utils.VERDADEIRO;
       }
     });
   }
 
-  editarVeiculo():void {
-    let veiculoForm:Veiculo = {
+  editarVeiculo(): void {
+    let veiculoForm: Veiculo = {
       id: this.formVeiculo.value.id!,
       placa: this.formVeiculo.value.placa!,
       modelo: this.formVeiculo.value.modelo!,
@@ -116,34 +120,36 @@ export class VeiculoFormComponent implements OnInit {
       this.veiculo.montadora !== veiculoForm.montadora;
 
     if(!alterado) {
-      this.ts.gerarToast('Nenhum dado foi alterado.', false);
+      this.ts.gerarToast('Nenhum dado foi alterado.', Utils.FALSO);
     } else {
       this.vs.updateVeiculo(veiculoForm).subscribe({
-        next: (resp) => {
+        next: (resp: RespostaReqBackend<Veiculo>) => {
           this.veiculo = resp.registros[0];
-          this.ts.gerarToast(`Veículo de placa ${resp.registros[0].placa} alterado com sucesso!`, true);
+          this.ts.gerarToast(`Veículo de placa ${resp.registros[0].placa} alterado com sucesso!`, Utils.VERDADEIRO);
           this.rota.navigate(['/veiculo/listar']);
-        },
-        error: (err) => {
-            console.log('Erro ao atualizar o veículo: '+ err.error.mensagem);
-            this.ts.gerarToast('Erro ao atualizar o veículo: '+ err.error.mensagem, false)
-        },
+          this.isLoaded = Utils.VERDADEIRO;
+        }
+        , error: (err) => {
+          let mensagem = Utils.getMensagemErro(err, Utils.ERRO_ATUALIZAR_REGISTRO);
+          console.error(mensagem);
+          this.ts.gerarToast(mensagem, Utils.FALSO);
+          this.isLoaded = Utils.VERDADEIRO;
+        }
       })
     }
   }
 
-  private getVeiculoById(id: number):void {
-     this.vs.getVeiculoById(id)
-      .subscribe({
-        next: (resp) => {
+  private getVeiculoById(id: number): void {
+     this.vs.getVeiculoById(id).subscribe({
+        next: (resp: RespostaReqBackend<Veiculo>) => {
           this.veiculo = resp.registros[0];
           this.formVeiculo.patchValue(resp.registros[0]);
-        },
-        error: (err) => {
+          this.isLoaded = Utils.VERDADEIRO;
+        }
+        , error: (err) => {
           console.error(err.error.mensagem);
-          this.ts.gerarToast(err.error.mensagem, false);
-        }, complete: () => {
-          this.isLoaded = true;
+          this.ts.gerarToast(err.error.mensagem, Utils.FALSO);
+          this.isLoaded = Utils.VERDADEIRO;
         }
       })
   }

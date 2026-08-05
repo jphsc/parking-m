@@ -45,6 +45,13 @@ public class VeiculoResource {
 	}
 
 	@GET
+	@Path("/placa/{placa}")
+	@Operation(summary = "Obtém um veículo", description = "Obtém um veículo pela placa do veículo")
+	public Response obterVeiculoByPlaca(@NotNull(message = Constantes.MSG_SEM_PLACA) @PathParam(value = "placa") String placa) {
+		return Response.status(Status.OK).entity(service.obterVeiculo(placa)).build();
+	}
+
+	@GET
 	@Operation(summary = "Obtém veículos", description = "Obtém todos os veículos, conforme paginação")
 	public Response obterVeiculos(
 			@Parameter(description = "Número da página", required = true) 

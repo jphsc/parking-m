@@ -7,7 +7,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class ToastService {
 
   protected mensagem: string = '';
-  protected isSucesso!: boolean;
   private classToast!: string;
   private duracaoEmMs = 3000;
   private readonly labelBtn: string = 'Fechar';
@@ -16,9 +15,8 @@ export class ToastService {
 
   gerarToast(msg: string, isSuccess: boolean): void{
     this.mensagem = msg;
-    this.isSucesso = isSuccess;
-    this.classToast = this.isSucesso ? 'toast-sucesso' : 'toast-erro';
-    this.duracaoEmMs = this.isSucesso ? 3000 : 10000;
+    this.classToast = isSuccess ? 'toast-sucesso' : 'toast-erro';
+    this.duracaoEmMs = isSuccess ? this.duracaoEmMs : 10000;
 
     this.toast();
   }

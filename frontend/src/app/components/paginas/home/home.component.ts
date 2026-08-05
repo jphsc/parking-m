@@ -17,11 +17,14 @@ import { Utils } from 'src/app/utils/util';
 })
 export class HomeComponent implements OnInit {
 
-  placa: string = '';
+  private readonly qtdRegistrosPorPagina: number = 4;
+  private loadingMessage$: Observable<string>;
+  paginar = Utils.FALSO;
+  paginaAtual: number = Utils.PAGINA_UM;
+  qtdPaginas: number[] = [];
   movAbertos: MovimentoVeiculo[] = [];
   isLoading$: Observable<boolean>;
-  loadingMessage$: Observable<string>;
-  isLoaded: boolean = false;
+  isLoaded: boolean = Utils.FALSO;
   placaForm = new FormGroup({ placaInput: new FormControl('', [Validators.required, Validators.minLength(7)]) });
 
   constructor(private mvs: MovimentoVeiculoService, private loadingService: LoadingService,
@@ -31,29 +34,10 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.mvs.getMovimentosAbertos().subscribe({
-      next: (resp: RespostaReqBackend<MovimentoVeiculo>) => {
-        resp.registros.forEach(mv => {
-          const tipoMov:string = Enumeradores.factory('TipoMovVeiculo').getDescricao(mv.tipoMovimento);
-          const situacaoMov:string = Enumeradores.factory('SituacaoMovimento').getDescricao(mv.situacao);
-
-          mv.tipoMovimento = tipoMov;
-          mv.situacao = situacaoMov;
-
-          this.movAbertos.push(mv);
-          });
-        this.isLoaded = true;
-      },
-      error: (err) => {
-        console.error('Erro ao carregar movimentos abertos:', err.error.mensagem);
-        this.ts.gerarToast("Não foi possível carregar os movimentos, tente novamente mais tarde", false);
-        this.isLoaded = true;
-      }
-    });
+    this.getMovimentosAbertos(Utils.PAGINA_UM);
 
     this.placaForm.get("placaInput")?.valueChanges.subscribe(value => {
       if(!value) return;
-
       this.formatarPlaca(value);
     })
   }
@@ -72,6 +56,40 @@ export class HomeComponent implements OnInit {
 
   public formatarPlaca(value: string): void {
     const placaFormatada = Utils.formatarPlaca(value);
-    this.placaForm.get("placaInput")?.setValue(placaFormatada, { emitEvent: false });
+    this.placaForm.get("placaInput")?.setValue(placaFormatada, { emitEvent: Utils.FALSO });
+  }
+
+  private getMovimentosAbertos(pagina: number): void {
+    this.isLoaded = Utils.FALSO;
+    this.movAbertos = [];
+    this.paginaAtual = pagina;
+
+    this.mvs.getMovimentosAbertos(pagina, this.qtdRegistrosPorPagina).subscribe({
+      next: (resp: RespostaReqBackend<MovimentoVeiculo>) => {
+        resp.registros.forEach(mv => {
+          const tipoMov:string = Enumeradores.factory('TipoMovVeiculo').getDescricao(mv.tipoMovimento);
+          const situacaoMov:string = Enumeradores.factory('SituacaoMovimento').getDescricao(mv.situacao);
+
+          mv.tipoMovimento = tipoMov;
+          mv.situacao = situacaoMov;
+
+          this.movAbertos.push(mv);
+        });
+
+        this.qtdPaginas = Utils.obterQtdPaginas(resp.quantidade, this.qtdRegistrosPorPagina);
+        this.paginar = Utils.paginarRegistros(resp.quantidade, this.qtdRegistrosPorPagina);
+        this.isLoaded = Utils.VERDADEIRO;
+      }
+      , error: (err) => {
+        console.error('Erro ao carregar movimentos abertos:', err.error.mensagem);
+        this.ts.gerarToast("Não foi possível carregar os movimentos, tente novamente mais tarde", Utils.FALSO);
+        this.paginar = Utils.FALSO;
+        this.isLoaded = Utils.VERDADEIRO;
+      }
+    });
+  }
+
+  protected paginarRegistros(pagina: number): void {
+    this.getMovimentosAbertos(pagina);
   }
 }

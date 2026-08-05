@@ -5,13 +5,15 @@ import { CardLateralComponent } from './card-lateral/card-lateral.component';
 import { CardCabecalhoComponent } from './card-cabecalho/card-cabecalho.component';
 import { LoadingComponent } from './loading/loading.component';
 import { RouterModule } from '@angular/router';
+import { PaginacaoComponent } from './paginacao/paginacao.component';
 
 
 @NgModule({
   declarations: [
     CardLateralComponent,
     CardCabecalhoComponent,
-    LoadingComponent
+    LoadingComponent,
+    PaginacaoComponent
   ],
   imports: [
     CommonModule,
@@ -20,7 +22,8 @@ import { RouterModule } from '@angular/router';
   exports: [
     CardCabecalhoComponent,
     CardLateralComponent,
-    LoadingComponent
+    LoadingComponent,
+    PaginacaoComponent
   ]
 })
 export class ComumModule { }

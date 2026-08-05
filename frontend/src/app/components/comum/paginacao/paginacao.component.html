@@ -1,0 +1,9 @@
+<div class="paginacao">
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      <li class="page-item" *ngFor="let page of qtdPaginas; let i = index">
+        <button class="page-link" (click)="paginarRegistros(page)" [ngClass]="{ 'btn-nav-ativa': page === paginaAtual }">{{page}}</button>
+      </li>
+    </ul>
+  </nav>
+</div>

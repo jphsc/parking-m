@@ -1,5 +1,6 @@
 package br.com.rhscdev.application.mapper;
 
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -7,7 +8,7 @@ import org.mapstruct.Named;
 import br.com.rhscdev.application.dto.response.MovimentoVeiculoResponse;
 import br.com.rhscdev.domain.entity.MovimentoVeiculoVO;
 
-@Mapper(componentModel = "cdi", uses = MovimentoFinanceiroMapper.class)
+@Mapper(componentModel = "cdi", uses = MovimentoFinanceiroMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface MovimentoVeiculoMapper {
 
 	@Mapping(target = "idMovimento", source = "id")

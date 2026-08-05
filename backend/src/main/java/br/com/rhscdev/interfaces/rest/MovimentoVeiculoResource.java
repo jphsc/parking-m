@@ -27,7 +27,7 @@ import jakarta.ws.rs.core.Response.Status;
 @Tag(name = "Movimentos de veículo")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/movimentos-veiculo")
+@Path("/movimento-veiculo")
 public class MovimentoVeiculoResource {
 
 	@Inject
@@ -35,7 +35,6 @@ public class MovimentoVeiculoResource {
 	
 	@Operation(summary = "Criar movimento de veículo", description = "Cria um movimento de veículo")
 	@POST
-	@Path("/criar")
 	public Response cadastarMovVeiculo(@RequestBody @Valid MovimentoVeiculoCriar dto) {
 		return Response.status(Status.CREATED).entity(service.criarMovimentoVeiculo(dto)).build();
 	}
@@ -51,7 +50,8 @@ public class MovimentoVeiculoResource {
 	@GET
 	public Response obterMovVeiculos(
 			@Parameter(description = "Número da página", required = true) 
-			@NotNull(message = Constantes.MSG_PAGINA_OBRIGATORIO) @QueryParam(value = "pagina") Integer pagina) {
+			@NotNull(message = Constantes.MSG_PAGINA_OBRIGATORIO) @QueryParam(value = "pagina") Integer pagina,
+			@Parameter(description = "Quantidade de registros") @QueryParam(value = "quantidade") Integer qtdRegistros) {
 		return Response.status(Status.OK).entity(service.obterMovsVeiculo(pagina)).build();
 	}
 
@@ -60,8 +60,9 @@ public class MovimentoVeiculoResource {
 	@Path("/movimentos")
 	public Response obterMovsVeiculoAberto(
 			@Parameter(description = "Número da página", required = true) 
-			@NotNull(message = Constantes.MSG_PAGINA_OBRIGATORIO) @QueryParam(value = "pagina") Integer pagina) {
-		return Response.status(Status.OK).entity(service.obterMovsVeiculoAberto(pagina)).build();
+			@NotNull(message = Constantes.MSG_PAGINA_OBRIGATORIO) @QueryParam(value = "pagina") Integer pagina,
+			@Parameter(description = "Quantidade de registros") @QueryParam(value = "quantidade") Integer qtdRegistros) {
+		return Response.status(Status.OK).entity(service.obterMovsVeiculoAberto(pagina, qtdRegistros)).build();
 	}
 
 	@Operation(summary = "Encerrar movimento de veículo", description = "Encerra um movimento de veículo")

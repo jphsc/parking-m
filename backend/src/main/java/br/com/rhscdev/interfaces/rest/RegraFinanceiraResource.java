@@ -31,7 +31,7 @@ import jakarta.ws.rs.core.Response.Status;
 @Tag(name = "Regra financeira")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/regras-financeiras")
+@Path("/regra-financeira")
 public class RegraFinanceiraResource {
 
 	@Inject
@@ -54,8 +54,9 @@ public class RegraFinanceiraResource {
 	@Operation(summary = "Obtém regras financeiras", description = "Obtém regras financeiras conforme paginação")
 	public Response obterRegraFinanceiras(
 			@Parameter(description = "Número da página", required = true)
-			@NotNull(message = Constantes.MSG_PAGINA_OBRIGATORIO) @QueryParam(value = "pagina") Integer pagina) {
-		return Response.status(Status.OK).entity(service.obterRegrasFinanceiras(pagina)).build();
+			@NotNull(message = Constantes.MSG_PAGINA_OBRIGATORIO) @QueryParam(value = "pagina") Integer pagina,
+			@Parameter(description = "Quantidade de registros") @QueryParam(value = "quantidade") Integer qtdRegistros) {
+		return Response.status(Status.OK).entity(service.obterRegrasFinanceiras(pagina, qtdRegistros)).build();
 	}
 
 	@PUT

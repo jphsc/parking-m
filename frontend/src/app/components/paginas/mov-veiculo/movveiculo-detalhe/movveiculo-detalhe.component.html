@@ -1,6 +1,6 @@
 <app-loading [isLoading]="(isLoading$ | async) ?? false"></app-loading>
 <div *ngIf="isLoaded">
-  <form action="">
+  <form>
     <div class="input-group mb-3">
       <span class="input-group-text" id="label-placa">Placa</span>
       <input id="placa" name="placa" type="text" class="form-control" aria-label="placa" aria-describedby="label-placa" disabled value="{{movimento.placa}}">
@@ -22,7 +22,7 @@
       <input id="situacao" name="situacao" type="text" class="form-control" aria-label="situacao" aria-describedby="label-situacao" disabled value="{{movimento.situacao}}">
     </div>
     <div *ngIf="!isTrueFalse">
-      <button type="submit" class="btn btn-primary">Finalizar movimento</button>
+      <button type="button" class="btn btn-primary" (click)="finalizarMovimento()">Finalizar movimento</button>
     </div>
   </form>
 </div>

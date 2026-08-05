@@ -1,14 +1,14 @@
 package br.com.rhscdev.domain.repository;
 
-import java.util.List;
 import java.util.Optional;
 
+import br.com.rhscdev.application.dto.response.DataQueryResult;
 import br.com.rhscdev.domain.entity.MovimentoVeiculoVO;
 
 public interface IMovimentoVeiculoRepository {
 
     Optional<MovimentoVeiculoVO> findByIdOp(Integer id);
-	List<MovimentoVeiculoVO> findAll(int pagina);
-	List<MovimentoVeiculoVO> findBySituacao(int idSituacao, int pagina);
+	DataQueryResult<MovimentoVeiculoVO> findAll(int pagina);
+	DataQueryResult<MovimentoVeiculoVO> findBySituacao(int idSituacao, int pagina, Integer qtdRegistros);
 	MovimentoVeiculoVO save(MovimentoVeiculoVO movVeiculo);
 }

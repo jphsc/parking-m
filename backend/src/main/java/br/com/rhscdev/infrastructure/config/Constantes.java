@@ -3,7 +3,7 @@ package br.com.rhscdev.infrastructure.config;
 public abstract class Constantes {
 
 	// Codigos erro do sistema
-	public static final int NRO_MAX_REGISTROS_PAGINACAO = 20;
+	public static final int NRO_MAX_REGISTROS_PAGINACAO = 10;
 	public static final int COD_INEXISTENTE = 100;
 	public static final int COD_VALIDACAO_REGISTRO = 200;
 	public static final int COD_VALIDACAO_METHOD = 300;

@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "cdi")
 public interface MovimentoFinanceiroMapper {
-
+	
 	@Mapping(target = "idRegra", source = "idRegra")
 	@Mapping(target = "idMovimento", source = "idMovimento")
 	MovimentoFinanceiroResponse toResponse(final MovimentoFinanceiroVO entity);

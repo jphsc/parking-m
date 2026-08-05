@@ -6,6 +6,7 @@ import { MovveiculoListarComponent } from './movveiculo-listar/movveiculo-listar
 import { MovveiculoFormComponent } from './movveiculo-form/movveiculo-form.component';
 import { MovveiculoDetalheComponent } from './movveiculo-detalhe/movveiculo-detalhe.component';
 import { ComumModule } from '../../comum/comum.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { ComumModule } from '../../comum/comum.module';
   imports: [
     CommonModule,
     MovVeiculoRoutingModule,
-    ComumModule
+    ComumModule,
+    ReactiveFormsModule
   ]
 })
 export class MovVeiculoModule { }

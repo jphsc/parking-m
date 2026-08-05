@@ -55,3 +55,9 @@ body {
   --mdc-snackbar-supporting-text-color: #ffffff;
   --mat-snack-bar-button-color: #000000;
 }
+
+.td-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+}

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import br.com.rhscdev.application.dto.request.MovimentoVeiculoCriar;
 import br.com.rhscdev.application.dto.request.MovimentoVeiculoEncerrar;
+import br.com.rhscdev.application.dto.response.DataQueryResult;
 import br.com.rhscdev.application.dto.response.MovimentoVeiculoResponse;
 import br.com.rhscdev.application.dto.response.RespostaPaginada;
 import br.com.rhscdev.application.mapper.MovimentoVeiculoMapper;
@@ -28,11 +29,11 @@ import jakarta.transaction.Transactional;
 @ApplicationScoped
 public class MovimentoVeiculoService {
 
+	private MovimentoVeiculoMapper mvMapper;
 	private VeiculoPanacheRepository vRepository;
 	private RegraFinancPanacheRepository rfRepository;
 	private MovVeiculoPanacheRepository mvRepository;
 	private MovFinanceiroPanacheRepository mfRepository;
-	private MovimentoVeiculoMapper mvMapper;
 	
 	public MovimentoVeiculoService(VeiculoPanacheRepository vRepository, RegraFinancPanacheRepository rfRepository, 
 			MovVeiculoPanacheRepository mvRepository, MovFinanceiroPanacheRepository mfRepository, MovimentoVeiculoMapper mvMapper) {
@@ -46,12 +47,11 @@ public class MovimentoVeiculoService {
 	@Transactional
 	public RespostaPaginada<MovimentoVeiculoResponse> criarMovimentoVeiculo(MovimentoVeiculoCriar req) {
 		
-		//Thread.sleep(4000);	
 		VeiculoVO veiculo = vRepository.findByIdOp(req.idVeiculo())
 				.orElseThrow(() -> new GlobalException(Constantes.COD_INEXISTENTE, String.format(Constantes.MSG_ERRO_VEICULO_NAO_ENCONTRADO, req.idVeiculo())));
 		
-		MovimentoVeiculoVO movVeiculo = MovimentoVeiculoVO.
-				criar(veiculo, req.tipoMovimento(), req.dtHrEntrada(), null, SituacaoMovimento.ABERTO.getId());
+		MovimentoVeiculoVO movVeiculo = MovimentoVeiculoVO
+				.criar(veiculo, req.tipoMovimento(), req.dtHrEntrada(), null, SituacaoMovimento.ABERTO.getId());
 		
 		movVeiculo = mvRepository.save(movVeiculo);
 		
@@ -81,30 +81,27 @@ public class MovimentoVeiculoService {
 	
 	public RespostaPaginada<MovimentoVeiculoResponse> obterMovsVeiculo(Integer pagina) {
 		
-		//Thread.sleep(4000);
-		int nroPagina = Utils.getNroPaginaConsulta(pagina);
-		List<MovimentoVeiculoVO> movsVeiculo = mvRepository.findAll(nroPagina);
-		List<MovimentoVeiculoResponse> resposta = movsVeiculo.stream().map(mvMapper::toResponse).collect(Collectors.toList());
-		String mensagem = Utils.getMensagemBuscaRegistro(movsVeiculo);
+		int nroPagina = Utils.getNroPaginaConsulta(pagina);		
+		DataQueryResult<MovimentoVeiculoVO> resultDb = mvRepository.findAll(nroPagina);
+		List<MovimentoVeiculoResponse> movimentos = resultDb.registros().stream().map(mvMapper::toResponse).collect(Collectors.toList());
+		String mensagem = Utils.getMensagemBuscaRegistro(movimentos);
 		
-		return RespostaPaginada.of(resposta, nroPagina, mensagem);
+		return RespostaPaginada.of(movimentos, nroPagina, mensagem, resultDb.quantidade());
 	}
 	
-	public RespostaPaginada<MovimentoVeiculoResponse> obterMovsVeiculoAberto(Integer pagina) {
+	public RespostaPaginada<MovimentoVeiculoResponse> obterMovsVeiculoAberto(Integer pagina, Integer qtdRegistros) {
 		
-		//Thread.sleep(4000);
-		Integer nroPagina = Utils.getNroPaginaConsulta(pagina);
-		List<MovimentoVeiculoResponse> movsVeiculo = mvRepository.findBySituacao(SituacaoMovimento.ABERTO.getId(), nroPagina)
-				.stream().map(mvMapper::toResponse).collect(Collectors.toList());
-		String mensagem = Utils.getMensagemBuscaRegistro(movsVeiculo);
+		int nroPagina = Utils.getNroPaginaConsulta(pagina);
+		DataQueryResult<MovimentoVeiculoVO> resultDb = mvRepository.findBySituacao(SituacaoMovimento.ABERTO.getId(), nroPagina, qtdRegistros);
+		List<MovimentoVeiculoResponse> movimentos = resultDb.registros().stream().map(mvMapper::toResponse).collect(Collectors.toList());
+		String mensagem = Utils.getMensagemBuscaRegistro(movimentos);
 		
-		return RespostaPaginada.of(movsVeiculo, nroPagina, mensagem);
+		return RespostaPaginada.of(movimentos, nroPagina, mensagem, resultDb.quantidade());
 	}
 	
 	@Transactional
 	public RespostaPaginada<MovimentoVeiculoResponse> encerrarMovVeiculo(MovimentoVeiculoEncerrar req) {
 		
-		//Thread.sleep(4000);		
 		MovimentoVeiculoVO mvv = mvRepository.findByIdOp(req.idMovimento())
 				.orElseThrow(() -> new GlobalException(Constantes.COD_INEXISTENTE, String.format(Constantes.MSG_MOV_VEI_NAO_ENCONTRADO, req.idMovimento())));
 		

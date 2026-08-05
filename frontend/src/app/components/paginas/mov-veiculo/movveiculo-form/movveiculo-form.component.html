@@ -1,1 +1,61 @@
-<p>movveiculo-form works!</p>
+<app-loading [isLoading]="(isLoading$ | async) ?? false"></app-loading>
+<div *ngIf="isLoaded">
+  <div class="forma-informar-veiculo">
+
+    <fieldset class="border p-4 mb-4 rounded">
+      <legend class="w-auto px-2 float-none fs-5 fw-bold">Como deseja informar o veículo?</legend>
+
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="informar-veiculo" id="criar" value="1" (change)="informarVeiculoChange($event)" [checked]="informarVeiculo === 1">
+        <label class="form-check-label" for="criar">Criar veículo</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="informar-veiculo" id="selecionar" value="2" (change)="informarVeiculoChange($event)" [checked]="informarVeiculo === 2">
+        <label class="form-check-label" for="selecionar">Informar veículo</label>
+      </div>
+    </fieldset>
+  </div>
+
+
+  <form [formGroup]="formVeiculo" (ngSubmit)="incluirMovimento()">
+    <fieldset class="border p-4 mb-4 rounded">
+      <legend class="w-auto px-2 float-none fs-5 fw-bold">Dados do movimento</legend>
+      <div *ngIf="informarVeiculo == 1">
+
+        <label for="placa" class="form-label">Placa</label>
+        <input class="form-control" formControlName="placa" type="text" id="placa" placeholder="Ex. ABC1E34" required>
+
+        <label for="modelo" class="form-label">Modelo</label>
+        <input class="form-control" formControlName="modelo" type="text" id="modelo" placeholder="Ex. HB20" required>
+
+        <label for="montadora" class="form-label">Montadora</label>
+        <input class="form-control" formControlName="montadora" type="text" id="montadora" placeholder="Ex. Hyundai" required>
+      </div>
+
+      <div class="selecionar-veiculo" *ngIf="informarVeiculo == 2">
+        <div class="form-group">
+          <label for="veiculo">Placa do Veículo</label>
+          <input class="form-control" formControlName="placa" type="text" id="placa" name="placa" placeholder="Ex. ABC1E34" required>
+          <!-- <select class="form-control" id="veiculo" name="veiculo" formControlName="veiculo">
+            <option *ngFor="let veiculo of veiculos" [value]="veiculo.id">{{veiculo.montadora}} - {{veiculo.modelo}} - {{veiculo.placa}}</option>
+          </select> -->
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="regra" class="form-label">Regra financeira</label>
+        <select class="form-control" id="regra" name="regra" formControlName="regra">
+          <option *ngFor="let regra of regras" [value]="regra.id">{{regra.id}} - {{regra.descricao}} - {{regra.tipoCobranca}} - Movimento: {{regra.tipoMovimento}} - Valor: {{regra.valor | currency:'BRL'}}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="tp-mov" class="form-label">Tipo de movimento</label>
+        <select class="form-control" id="tp-mov" name="tp-mov" formControlName="tipoMovimento">
+          <option *ngFor="let tpm of tiposMovimento" [ngValue]="tpm.id">{{tpm.descricao}}</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-outline-primary" [disabled]="!formVeiculo.valid">Incluir Movimento</button>
+    </fieldset>
+  </form>
+</div>

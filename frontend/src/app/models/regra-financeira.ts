@@ -7,5 +7,5 @@ export interface RegraFinanceira {
   dtInicioValidade: any,
   dtFimValidade?: any,
   situacao: any,
-  versao: any
+  versao?: any
 }

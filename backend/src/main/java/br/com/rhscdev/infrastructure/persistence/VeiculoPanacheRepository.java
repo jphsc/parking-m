@@ -3,11 +3,12 @@ package br.com.rhscdev.infrastructure.persistence;
 import java.util.List;
 import java.util.Optional;
 
+import br.com.rhscdev.application.dto.response.DataQueryResult;
 import br.com.rhscdev.domain.entity.VeiculoVO;
 import br.com.rhscdev.domain.repository.IVeiculoRepository;
 import br.com.rhscdev.infrastructure.config.Constantes;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
-import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
@@ -24,10 +25,13 @@ public final class VeiculoPanacheRepository implements IVeiculoRepository, Panac
 	}
 
 	@Override
-	public List<VeiculoVO> findAll(Integer pagina) {
-		return findAll(Sort.by("id"))
-				.page(pagina, Constantes.NRO_MAX_REGISTROS_PAGINACAO)
-				.list();
+	public DataQueryResult<VeiculoVO> findAll(Integer pagina) {
+//		return findAll(Sort.by("id")).page(pagina, Constantes.NRO_MAX_REGISTROS_PAGINACAO).list();
+		PanacheQuery<VeiculoVO> dataDb = findAll();
+		List<VeiculoVO> registros = dataDb.page(pagina, Constantes.NRO_MAX_REGISTROS_PAGINACAO).list();
+		Long qtd = dataDb.count();
+		
+		return new DataQueryResult<VeiculoVO>(registros, qtd);
 	}
 
 	@Override

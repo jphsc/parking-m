@@ -9,27 +9,27 @@ import { RespostaReqBackend } from '../models/resposta.model';
   providedIn: 'root',
 })
 export class VeiculoService {
-  private baseUrlBackend = `${environment.baseUrlBackend}/veiculo`;
+  private baseUrlBackend = `${environment.baseUrlBackend}/veiculos`;
 
   constructor(private http: HttpClient) {}
 
-  getVeiculos(): Observable<RespostaReqBackend<Veiculo>> {
-    return this.http.get<RespostaReqBackend<Veiculo>>(`${this.baseUrlBackend}/veiculos`);
+  getVeiculos(pagina: number): Observable<RespostaReqBackend<Veiculo>> {
+    return this.http.get<RespostaReqBackend<Veiculo>>(`${this.baseUrlBackend}?pagina=${pagina}`);
   }
 
   getVeiculoById(id: number): Observable<RespostaReqBackend<Veiculo>> {
     return this.http.get<RespostaReqBackend<Veiculo>>(`${this.baseUrlBackend}/${id}`);
   }
 
-  getVeiculoByFilter(v: Veiculo): Observable<RespostaReqBackend<Veiculo>> {
-    return this.http.post<RespostaReqBackend<Veiculo>>(`${this.baseUrlBackend}`, v);
+  getVeiculoByPlaca(placa: string | null): Observable<RespostaReqBackend<Veiculo>> {
+    return this.http.get<RespostaReqBackend<Veiculo>>(`${this.baseUrlBackend}/placa/${placa}`);
   }
 
   createVeiculo(v: Veiculo): Observable<RespostaReqBackend<Veiculo>> {
-    return this.http.post<RespostaReqBackend<Veiculo>>(`${this.baseUrlBackend}/cadastrar`, v);
+    return this.http.post<RespostaReqBackend<Veiculo>>(`${this.baseUrlBackend}`, v);
   }
 
   updateVeiculo(v: Veiculo): Observable<RespostaReqBackend<Veiculo>> {
-    return this.http.put<RespostaReqBackend<Veiculo>>(`${this.baseUrlBackend}/atualizar`, v);
+    return this.http.put<RespostaReqBackend<Veiculo>>(`${this.baseUrlBackend}`, v);
   }
 }

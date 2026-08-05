@@ -3,6 +3,7 @@
   <table class="tabela-generica" *ngIf="movimentos.length != 0; else semMovimentos">
     <thead>
       <tr>
+        <th>id</th>
         <th>Veículo</th>
         <th>Tipo de movimento</th>
         <th>Situação</th>
@@ -13,14 +14,17 @@
     </thead>
     <tbody *ngFor="let mv of movimentos">
       <tr>
+        <td>{{ mv.idMovimento }}</td>
         <td>{{ mv.placa }}</td>
         <td>{{ mv.tipoMovimento }}</td>
         <td>{{ mv.situacao }}</td>
         <td>{{ mv.dtHrEntrada | date:'dd/MM/yyyy HH:mm' }}</td>
         <td>{{ mv.dtHrSaida | date:'dd/MM/yyyy HH:mm' }}</td>
-        <td>
-          <button class="btn btn-primary btn-acao" (click)="detalharMovimento(mv.id)">Detalhar</button><br>
-          <button class="btn btn-danger btn-acao" (click)="finalizarMovimento(mv.id)" *ngIf="mv.situacao == 'Aberto'">Encerrar</button>
+        <td class="td-buttons">
+          <!-- <button class="btn btn-primary btn-acao" (click)="detalharMovimento(mv.id)">Detalhar</button><br>
+          <button class="btn btn-danger btn-acao" (click)="finalizarMovimento(mv.id)" *ngIf="mv.situacao == 'Aberto'">Encerrar</button> -->
+          <i class="fi fi-tr-file-circle-info btn btn-primary btn-acao" (click)="detalharMovimento(mv.idMovimento)"></i>
+          <i class="fi fi-tr-closed btn btn-danger" (click)="finalizarMovimento(mv.idMovimento)" *ngIf="mv.situacao == 'Aberto'"></i>
         </td>
       </tr>
     </tbody>
@@ -29,4 +33,8 @@
   <ng-template #semMovimentos>
     <p>Nenhum movimento de veículo encontrado.</p>
   </ng-template>
+
+  <div class="paginacao" *ngIf="paginar && isLoaded">
+    <app-paginacao [qtdPaginas]="qtdPaginas" [paginaAtual]="paginaAtual" (paginar)="paginarRegistros($event)"></app-paginacao>
+  </div>
 </div>

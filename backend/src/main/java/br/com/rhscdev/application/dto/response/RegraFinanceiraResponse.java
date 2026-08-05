@@ -1,6 +1,7 @@
 package br.com.rhscdev.application.dto.response;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -12,7 +13,7 @@ public class RegraFinanceiraResponse implements BaseIdentificavel, Serializable 
 	
 	private Integer id;
 	private String descricao;
-	private Double valor;
+	private BigDecimal valor;
 	private Integer tipoCobranca;
 	private Integer tipoMovimento;
 	private LocalDate dtInicioValidade;
@@ -24,7 +25,7 @@ public class RegraFinanceiraResponse implements BaseIdentificavel, Serializable 
 		
 	}
 
-	public RegraFinanceiraResponse(Integer id, String descricao, Double valor, Integer tipoCobranca, Integer tipoMovimento,
+	public RegraFinanceiraResponse(Integer id, String descricao, BigDecimal valor, Integer tipoCobranca, Integer tipoMovimento,
 			LocalDate dtInicioValidade, LocalDate dtFimValidade, Integer situacao, LocalDateTime versao) {
 		this.id = id;
 		this.descricao = descricao;
@@ -65,11 +66,11 @@ public class RegraFinanceiraResponse implements BaseIdentificavel, Serializable 
 		this.descricao = descricao;
 	}
 
-	public Double getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
 
-	public void setValor(Double valor) {
+	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 
@@ -125,7 +126,7 @@ public class RegraFinanceiraResponse implements BaseIdentificavel, Serializable 
 
 		private Integer id;
 		private String descricao;
-		private Double valor;
+		private BigDecimal valor;
 		private Integer tipoCobranca;
 		private Integer tipoMovimento;
 		private LocalDate dtInicioValidade;
@@ -147,7 +148,7 @@ public class RegraFinanceiraResponse implements BaseIdentificavel, Serializable 
 			return this;
 		}
 		
-		public Builder setValor(Double valor) {
+		public Builder setValor(BigDecimal valor) {
 			this.valor = valor;
 			return this;
 		}

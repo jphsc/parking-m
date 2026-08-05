@@ -27,7 +27,7 @@ import jakarta.persistence.Table;
 @DynamicUpdate
 @Table(name = "tb_movimento_financeiro")
 @IdClass(MovimentoFinanceiroVOId.class)
-@AttributeOverride(name = "versao", column = @Column(name = "mvf_versao", nullable = false))
+@AttributeOverride(name = "versao", column = @Column(name = "mvf_versao"))
 public class MovimentoFinanceiroVO extends BaseVO implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -152,7 +152,7 @@ public class MovimentoFinanceiroVO extends BaseVO implements Serializable {
 	 * 
 	 * <p>Dependendo do tipo de movimento (mensalista, final de semana, etc.), aplica regras diferentes:
 	 * - Para mensalistas ou finais de semana, retorna o valor fixo da regra.
-	 * - Para demais casos, calcula o valor com base no número de horas e valor da regra.
+	 * - Para demais casos, calcula o valor com base no número de horas/dias e valor da regra.
 	 * 
 	 * @param movimento - movimento do veículo do tipo MovimentoVeiculoVO
 	 * @param regraFinanceira - regra financeira aplicável do tipo RegraFinanceiraVO
@@ -166,16 +166,15 @@ public class MovimentoFinanceiroVO extends BaseVO implements Serializable {
 		Duration duracao = Duration.between(entrada, LocalDateTime.now());
 		long dias = duracao.toDays();
 		long minutos = duracao.toMinutes();
-		int horas = (int) (minutos%60 > 10 ? (minutos/60 + 1) : (minutos/60));
+		int horas = (int) (minutos%60 > 10 ? (minutos/60) + 1 : (minutos/60));
 		BigDecimal valor = BigDecimal.ZERO;
-		
 
 		switch(tipoMovimento) {
 			case HORA:
-				valor = valorRegra.multiply(BigDecimal.valueOf(horas)); //valorRegra * horas;
+				valor = valorRegra.multiply(BigDecimal.valueOf(horas));
 				break;
 			case DIA:
-				valor = valorRegra.multiply(BigDecimal.valueOf(dias)); //valorRegra * dias;
+				valor = valorRegra.multiply(BigDecimal.valueOf(dias));
 				break;
 			default:
 				valor = valorRegra;

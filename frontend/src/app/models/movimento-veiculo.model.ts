@@ -1,10 +1,10 @@
 export interface MovimentoVeiculo {
-  id?: number;
+  idMovimento?: any;
   idVeiculo?: number;
   idRegra?: number;
   placa?: string;
   tipoMovimento?: any;
-  dtHrEntrada?: Date;
+  dtHrEntrada?: any;
   dtHrSaida?: Date;
   situacao?: any;
   versao?: Date;

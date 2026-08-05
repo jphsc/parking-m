@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>br.com.rhscdeveloper</groupId>
+  <groupId>br.com.rhscdev</groupId>
   <artifactId>parking-m</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <properties>
@@ -44,6 +44,14 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jdbc-postgresql</artifactId>
     </dependency>
+	<dependency>
+    	<groupId>io.quarkus</groupId>
+    	<artifactId>quarkus-jdbc-h2</artifactId>
+	</dependency>
+    <dependency>
+    	<groupId>org.flywaydb</groupId>
+		<artifactId>flyway-core</artifactId>
+	</dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
@@ -102,6 +110,17 @@
 	    <groupId>io.quarkus</groupId>
 	    <artifactId>quarkus-hibernate-validator</artifactId>
 	</dependency>
+	<dependency>
+		<groupId>io.quarkus</groupId>
+		<artifactId>quarkus-junit5-mockito</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.assertj</groupId>
+    	<artifactId>assertj-core</artifactId>
+    	<version>3.24.2</version>
+    	<scope>test</scope>
+	</dependency>
   </dependencies>
   <build>
     <plugins>
@@ -133,7 +152,6 @@
                     </path>
                 </annotationProcessorPaths>
                 <compilerArgs>
-					<!--<arg>-proc:full</arg>  incluido esse-->
                     <arg>-Amapstruct.defaultComponentModel=cdi</arg>
                 </compilerArgs>
             </configuration>

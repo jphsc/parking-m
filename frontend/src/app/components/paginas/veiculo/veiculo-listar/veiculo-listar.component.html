@@ -18,37 +18,18 @@
           <td>{{ v.montadora }}</td>
           <td>{{ v.dtRegistro | date : "dd/MM/yyyy" }}</td>
           <td>
-            <button
-              class="btn btn-primary btn-acao"
-              (click)="navEditarVeiculo(v.id)"
-            >
-              Editar
-            </button>
+            <button class="btn btn-primary btn-acao btn-sm" (click)="navEditarVeiculo(v.id)">Editar</button>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <nav aria-label="Page navigation example" class="el-pagination">
-      <ul class="pagination">
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </div>
+    <ng-template #semVeiculos>
+      <p>Não há veículos cadastrados até o momento.</p>
+    </ng-template>
 
-  <ng-template #semVeiculos>
-    <p>Não há veículos cadastrados até o momento.</p>
-  </ng-template>
+    <div class="paginacao" *ngIf="paginar && isLoaded">
+      <app-paginacao [qtdPaginas]="qtdPaginas" [paginaAtual]="paginaAtual" (paginar)="paginarRegistros($event)"></app-paginacao>
+    </div>
+  </div>
 </div>
